@@ -15,6 +15,38 @@ There are primarily two ways to contribute:
 
 #### Serialize a record to JSON
 #### Deserialize JSON to a record
+```ml
+type line = {
+  start: point,
+  end_: point
+}
+and type point = {
+  x: float,
+  y: float
+}
+
+module Decode = struct
+  let point json =
+    let open Json.Decode in {
+      x = json |> field "x" float;
+      y = json |> field "y" float
+    }
+
+  let line json =
+    let open Json.Decode in {
+      start = json |> field "start" point;
+      end_  = json |> field "end" point
+    }
+end
+
+let data = {| {
+  "start": { "x": 1.1, "y": -0.4 },
+  "end":   { "x": 5.3, "y": 3.8 }
+} |}
+
+let line = Js.Json.parseExn |> Decode.line
+```
+
 #### Encode and decode Base64
 #### Generate random numbers
 #### Log a message to the console
