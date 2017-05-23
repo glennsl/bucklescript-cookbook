@@ -57,7 +57,15 @@ let line = Js.Json.parseExn |> Decode.line
 ## FFI
 
 #### Bind to a simple function
+```ml
+external random : unit -> float = "Math.random" [@@bs.val]
+```
+
 #### Bind to a function in another module
+```ml
+external leftpad : string -> int -> char -> string = "" [@@bs.val] [@@bs.module "left-pad"]
+```
+
 #### Define composable bitflags constants
 
 ## Browser-specific
@@ -70,4 +78,4 @@ let line = Js.Json.parseExn |> Decode.line
 #### Read lines from a text file
 #### Read and parse a JSON file
 #### Find files using a given predicate
-#### Runa an external command
+#### Run an external command
