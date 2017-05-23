@@ -15,6 +15,7 @@ There are primarily two ways to contribute:
 
 #### Serialize a record to JSON
 #### Deserialize JSON to a record
+Uses [bs-json](https://github.com/BuckleTypes/bs-json)
 ```ml
 type line = {
   start: point;
