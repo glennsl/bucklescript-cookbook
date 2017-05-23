@@ -17,25 +17,27 @@ There are primarily two ways to contribute:
 #### Deserialize JSON to a record
 ```ml
 type line = {
-  start: point,
-  end_: point
+  start: point;
+  end_: point;
+  thickness: int option
 }
-and type point = {
-  x: float,
+and point = {
+  x: float;
   y: float
 }
 
 module Decode = struct
   let point json =
-    let open Json.Decode in {
+    let open! Json.Decode in {
       x = json |> field "x" float;
       y = json |> field "y" float
     }
 
   let line json =
-    let open Json.Decode in {
-      start = json |> field "start" point;
-      end_  = json |> field "end" point
+    Json.Decode.{
+      start     = json |> field "start" point;
+      end_      = json |> field "end" point;
+      thickness = json |> optional (field "thickness" int)
     }
 end
 
@@ -44,7 +46,8 @@ let data = {| {
   "end":   { "x": 5.3, "y": 3.8 }
 } |}
 
-let line = Js.Json.parseExn |> Decode.line
+let line = data |> Js.Json.parseExn
+                |> Decode.line
 ```
 
 #### Encode and decode Base64
