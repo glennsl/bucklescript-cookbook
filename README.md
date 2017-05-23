@@ -2,7 +2,7 @@
 
 The BuckleScript Cookbook is a collection of simple examples intended to both showcase BuckleScript by example, and to demonstrate good practices for accomplishing common tasks.
 
-This was heavily inspired by the [Rust Cookbook](https://brson.github.io/rust-cookbook/).
+This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/rust-cookbook/).
 
 ## Contributing
 
