@@ -4,6 +4,33 @@ The BuckleScript Cookbook is a collection of simple examples intended to both sh
 
 This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/rust-cookbook/).
 
+<!-- toc -->
+
+- [Contributing](#contributing)
+- [General](#general)
+    + [Serialize a record to JSON](#serialize-a-record-to-json)
+    + [Deserialize JSON to a record](#deserialize-json-to-a-record)
+    + [Encode and decode Base64](#encode-and-decode-base64)
+    + [Generate random numbers](#generate-random-numbers)
+    + [Log a message to the console](#log-a-message-to-the-console)
+    + [Use string interpolation](#use-string-interpolation)
+    + [Format a string using Printf](#format-a-string-using-printf)
+    + [Make and usa a Map](#make-and-usa-a-map)
+- [FFI](#ffi)
+    + [Bind to a simple function](#bind-to-a-simple-function)
+    + [Bind to a function in another module](#bind-to-a-function-in-another-module)
+    + [Define composable bitflags constants](#define-composable-bitflags-constants)
+- [Browser-specific](#browser-specific)
+    + [Extract all links form a webpage](#extract-all-links-form-a-webpage)
+    + [Fetch a json resource from some server (Query the GitHub API?)](#fetch-a-json-resource-from-some-server-query-the-github-api)
+- [Node-specific](#node-specific)
+    + [Read lines from a text file](#read-lines-from-a-text-file)
+    + [Read and parse a JSON file](#read-and-parse-a-json-file)
+    + [Find files using a given predicate](#find-files-using-a-given-predicate)
+    + [Run an external command](#run-an-external-command)
+
+<!-- tocstop -->
+
 ## Contributing
 
 There are primarily two ways to contribute:
