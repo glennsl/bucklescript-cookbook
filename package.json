@@ -1,0 +1,25 @@
+{
+  "name": "bucklescript-cookbook",
+  "version": "0.1.0",
+  "description": "The BuckleScript Cookbook is a collection of simple examples intended to both showcase BuckleScript by example, and to demonstrate good practices for accomplishing common tasks.",
+  "scripts": {
+    "test": "md-codecheck README.m""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glennsl/bucklescript-cookbook.git"
+  },
+  "keywords": [
+    "BuckleScript",
+    "Cookbook"
+  ],
+  "author": "glennsl",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/glennsl/bucklescript-cookbook/issues"
+  },
+  "homepage": "https://github.com/glennsl/bucklescript-cookbook#readme",
+  "dependencies": {
+    "md-codecheck": "glennsl/md-codecheck",
+    "bs-plaform": "blomberg/bucklescript"
+  }
