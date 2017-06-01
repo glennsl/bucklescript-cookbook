@@ -94,7 +94,11 @@ let _ =
   |> print_endline 
 ```
 
+
+
 #### Generate random numbers
+
+
 #### Log a message to the console
 
 ```ml
@@ -103,6 +107,11 @@ Js.log "Hello BuckleScript!"
 
 #### Use string interpolation
 #### Format a string using Printf
+
+```ml
+# Printf.printf ("Foo %d  %s") 2 "bar"
+```
+
 #### Make and usa a Map
 
 ## FFI
