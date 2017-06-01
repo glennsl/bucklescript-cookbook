@@ -130,7 +130,7 @@ let () =
   
   let open IntMap in
     (* create a map with keys 1 and 2 *)
-    let map12 = add 1 "ocaml" (add 2 "bs" empty) in
+    let map12 = empty |> add 1 "ocaml" |> add 2 "bs" in
 
     (* print each key, value pair *)
     let print_kv k v = Js.log ("key: " ^ (string_of_int k) ^ " val: " ^ v) in
