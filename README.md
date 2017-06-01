@@ -86,11 +86,21 @@ To encode and decode Base64, you can bind to Javascript functions `btoa` and `at
 external  btoa : string -> string = "window.btoa" [@@bs.val]
 external  atob : string -> string = "window.atob" [@@bs.val]
 
-let _ = print_endline @@ atob @@ btoa "Hello World!"
+let _ = 
+  (* encode "Hello World!" *)
+  btoa "Hello World!"
+  (* decode "Hello World!" *)
+  |> atob 
+  |> print_endline 
 ```
 
 #### Generate random numbers
 #### Log a message to the console
+
+```ml
+Js.log "Hello BuckleScript!"
+```
+
 #### Use string interpolation
 #### Format a string using Printf
 #### Make and usa a Map
