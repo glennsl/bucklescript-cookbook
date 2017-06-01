@@ -90,13 +90,29 @@ Js.log "Hello BuckleScript!"
 ```
 
 #### Use string interpolation
+
 #### Format a string using Printf
 
 ```ml
 # Printf.printf ("Foo %d  %s") 2 "bar"
 ```
 
-#### Make and usa a Map
+#### Make and use a Map
+
+To create a Map, use the Map.Make functor. It expects a module with the folowing signature:
+```ml
+module type OrderedType = sig type t val compare : t -> t -> int end
+```
+
+For instance, to create the map which associate 1 to "ocaml" and 2 to "bs":
+```ml
+let () = 
+  let module IntMap = 
+    Map.Make(struct type t = int let compare = compare end) in
+  let open IntMap in
+    add 1 "ocaml" (add 2 "bs" empty) |> 
+    iter (fun k v -> Js.log ("key: " ^ (string_of_int k) ^ " val: " ^ v))
+```
 
 ## FFI
 
