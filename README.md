@@ -82,6 +82,12 @@ let line = data |> Js.Json.parseExn
 
 #### Generate random numbers
 
+Use [Random module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Random.html) to generate random numbers
+
+```ml
+let () = 
+  Js.log @@ Random.int 5
+```
 
 #### Log a message to the console
 
@@ -92,6 +98,8 @@ Js.log "Hello BuckleScript!"
 #### Use string interpolation
 
 #### Format a string using Printf
+
+Use [Printf module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Printf.html)
 
 ```ml
 # Printf.printf ("Foo %d  %s") 2 "bar"
