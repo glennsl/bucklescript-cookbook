@@ -88,6 +88,11 @@ external  atob : string -> string = "window.atob" [@@bs.val]
 
 let _ =  "Hello World!" |> btoa |> atob |> Js.log
 ```
+Alternatively, if you have [bs-webapi](https://github.com/BuckleTypes/bs-webapi-incubator) installed, you can use `btoa` and `atob` directly:
+
+```ml
+let _ =  "Hello World!" |> btoa |> atob |> Js.log
+```
 
 #### Generate random numbers
 
