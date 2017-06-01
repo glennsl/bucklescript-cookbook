@@ -95,7 +95,7 @@ Use [Random module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Random.htm
 
 ```ml
 let () = 
-  Js.log @@ Random.int 5
+  Js.log (Random.int 5)
 ```
 
 #### Log a message to the console
@@ -124,11 +124,17 @@ module type OrderedType = sig type t val compare : t -> t -> int end
 For instance, to create the map which associate 1 to "ocaml" and 2 to "bs":
 ```ml
 let () = 
+  (* create a module IntMap *)
   let module IntMap = 
     Map.Make(struct type t = int let compare = compare end) in
+  
   let open IntMap in
-    add 1 "ocaml" (add 2 "bs" empty) |> 
-    iter (fun k v -> Js.log ("key: " ^ (string_of_int k) ^ " val: " ^ v))
+    (* create a map with keys 1 and 2 *)
+    let map12 = add 1 "ocaml" (add 2 "bs" empty) in
+
+    (* print each key, value pair *)
+    let print_kv k v = Js.log ("key: " ^ (string_of_int k) ^ " val: " ^ v) in
+    iter print_kv map12
 ```
 
 ## FFI
