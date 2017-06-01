@@ -80,6 +80,15 @@ let line = data |> Js.Json.parseExn
 
 #### Encode and decode Base64
 
+To encode and decode Base64, you can bind to Javascript functions `btoa` and `atob`, respectively:
+
+```ml
+external  btoa : string -> string = "window.btoa" [@@bs.val]
+external  atob : string -> string = "window.atob" [@@bs.val]
+
+let _ =  "Hello World!" |> btoa |> atob |> Js.log
+```
+
 #### Generate random numbers
 
 Use [Random module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Random.html) to generate random numbers
