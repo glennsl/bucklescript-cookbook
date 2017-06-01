@@ -80,22 +80,6 @@ let line = data |> Js.Json.parseExn
 
 #### Encode and decode Base64
 
-To encode and decode Base64, you can bind to Javascript functions `btoa` and `atob`, respectively:
-
-```ml
-external  btoa : string -> string = "window.btoa" [@@bs.val]
-external  atob : string -> string = "window.atob" [@@bs.val]
-
-let _ = 
-  (* encode "Hello World!" *)
-  btoa "Hello World!"
-  (* decode "Hello World!" *)
-  |> atob 
-  |> print_endline 
-```
-
-
-
 #### Generate random numbers
 
 
@@ -131,6 +115,7 @@ external leftpad : string -> int -> char -> string = "" [@@bs.val] [@@bs.module 
 ## Browser-specific
 
 #### Extract all links form a webpage
+
 #### Fetch a json resource from some server (Query the GitHub API?)
 
 ## Node-specific
