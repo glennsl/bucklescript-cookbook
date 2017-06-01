@@ -79,6 +79,16 @@ let line = data |> Js.Json.parseExn
 ```
 
 #### Encode and decode Base64
+
+To encode and decode Base64, you can bind to Javascript functions `btoa` and `atob`, respectively:
+
+```ml
+external  btoa : string -> string = "window.btoa" [@@bs.val]
+external  atob : string -> string = "window.atob" [@@bs.val]
+
+let _ = print_endline @@ atob @@ btoa "Hello World!"
+```
+
 #### Generate random numbers
 #### Log a message to the console
 #### Use string interpolation
