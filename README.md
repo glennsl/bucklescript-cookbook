@@ -79,11 +79,78 @@ let line = data |> Js.Json.parseExn
 ```
 
 #### Encode and decode Base64
+
+To encode and decode Base64, you can bind to Javascript functions `btoa` and `atob`, respectively:
+
+```ml
+external  btoa : string -> string = "window.btoa" [@@bs.val]
+external  atob : string -> string = "window.atob" [@@bs.val]
+
+let _ =  "Hello World!" |> btoa |> atob |> Js.log
+```
+
+Alternatively, if you have [bs-webapi](https://github.com/BuckleTypes/bs-webapi-incubator) installed:
+
+```ml
+open ReasonJs.Base64
+
+let _ =  "Hello World!" |> btoa |> atob |> Js.log
+```
+
 #### Generate random numbers
+
+Use [Random module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Random.html) to generate random numbers
+
+```ml
+Js.log (Random.int 5)
+```
+
 #### Log a message to the console
+
+```ml
+Js.log "Hello BuckleScript!"
+```
+
 #### Use string interpolation
+
+```ml
+let () =
+  let world = "World" in
+  Js.log {j|Hello，$world!|j}
+```
+
 #### Format a string using Printf
-#### Make and usa a Map
+
+Use [Printf module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Printf.html)
+
+```ml
+# Printf.printf ("Foo %d  %s") 2 "bar"
+```
+
+#### Make and use a Map
+
+To create a Map, use the Map.Make functor. It expects a module with the folowing signature:
+```ml
+module type OrderedType = sig type t val compare : t -> t -> int end
+```
+
+For instance, to create the map which associate 1 to "ocaml" and 2 to "bs":
+```ml
+let () = 
+  (* create a module IntMap *)
+  let module IntMap = 
+    Map.Make(struct type t = int let compare = compare end) in
+  
+  let open IntMap in
+    (* create a map with keys 1 and 2 *)
+    let map12 = empty |> add 1 "ocaml" |> add 2 "bs" in
+
+    (* print each key, value pair *)
+    let printKV k v = 
+      let k = string_of_int k in 
+      Js.log {j|key:$k, val:$v|j} in
+    iter printKV map12;
+```
 
 ## FFI
 
@@ -101,9 +168,54 @@ external leftpad : string -> int -> char -> string = "" [@@bs.val] [@@bs.module 
 
 ## Browser-specific
 
-#### Extract all links form a webpage
-#### Fetch a json resource from some server (Query the GitHub API?)
+#### Extract all links from a webpage
 
+```ml
+open ReasonJs.Dom
+
+let printAllLinks () =
+  document
+  |> Document.querySelectorAll "a"
+  |> NodeList.toArray
+  |> Array.iter (fun n -> 
+    n 
+    |> Element.ofNode
+    |> (function
+        | None -> failwith "Not an Element"
+        | Some el -> Element.innerHTML el)
+    |> Js.log)
+
+Window.setOnLoad window printAllLinks
+```
+#### Fetch a json resource from some server (Query the GitHub API?)
+Uses [bs-json](https://github.com/BuckleTypes/bs-json) and [bs-fetch](https://github.com/BuckleTypes/bs-fetch)
+
+```ml
+open Bs_fetch  
+
+(* given an array of repositories object as a JSON string *)
+(* returns an array of names *)
+let names text = 
+    match Js.Json.parseExn text with
+    | arr -> 
+        Json.Decode.(array (field "name" string) arr)
+    | exception _ -> failwith ("Error parsing: " ^ text)
+
+(* fetch all public repositories of user [BuckleTypes] *)
+(* print their names to the console *)
+let printGithubRepos () = Js.Promise.(
+    fetch "https://api.github.com/users/BuckleTypes/repos"
+    |> then_ Response.text
+    |> then_ (fun text -> 
+        text 
+        |> names
+        |> Array.iter Js.log 
+        |> resolve)
+    |> ignore
+)
+
+let () = printGithubRepos ()
+```
 ## Node-specific
 
 #### Read lines from a text file
