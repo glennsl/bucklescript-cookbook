@@ -115,9 +115,8 @@ Js.log "Hello BuckleScript!"
 
 ```ml
 let () =
-  let world = {j|World|j} in
-  let hello_world = {j|Hello，$world|j} in
-  Js.log hello_world
+  let world = "World" in
+  Js.log {j|Hello，$world!|j}
 ```
 
 #### Format a string using Printf
@@ -147,8 +146,10 @@ let () =
     let map12 = empty |> add 1 "ocaml" |> add 2 "bs" in
 
     (* print each key, value pair *)
-    let print_kv k v = Js.log ("key: " ^ (string_of_int k) ^ " val: " ^ v) in
-    iter print_kv map12
+    let printKV k v = 
+      let k = string_of_int k in 
+      Js.log {j|key:$k, val:$v|j} in
+    iter printKV map12;
 ```
 
 ## FFI
@@ -171,21 +172,20 @@ external leftpad : string -> int -> char -> string = "" [@@bs.val] [@@bs.module 
 
 ```ml
 open ReasonJs.Dom
-open Document
 
-let all_links () =
+let printAllLinks () =
   document
-  |> querySelectorAll "a"
+  |> Document.querySelectorAll "a"
   |> NodeList.toArray
   |> Array.iter (fun n -> 
     n 
     |> Element.ofNode
     |> (function
-        | None -> "Not an Element" 
+        | None -> failwith "Not an Element"
         | Some el -> Element.innerHTML el)
     |> Js.log)
 
-Window.setOnLoad window all_links
+Window.setOnLoad window printAllLinks
 ```
 #### Fetch a json resource from some server (Query the GitHub API?)
 Uses [bs-json](https://github.com/BuckleTypes/bs-json) and [bs-fetch](https://github.com/BuckleTypes/bs-fetch)
@@ -203,7 +203,7 @@ let names text =
 
 (* fetch all public repositories of user [BuckleTypes] *)
 (* print their names to the console *)
-let githubRepos () = Js.Promise.(
+let printGithubRepos () = Js.Promise.(
     fetch "https://api.github.com/users/BuckleTypes/repos"
     |> then_ Response.text
     |> then_ (fun text -> 
@@ -214,7 +214,7 @@ let githubRepos () = Js.Promise.(
     |> ignore
 )
 
-let () = githubRepos ()
+let () = printGithubRepos ()
 ```
 ## Node-specific
 
