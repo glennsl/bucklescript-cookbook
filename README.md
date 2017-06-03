@@ -182,7 +182,34 @@ let all_links () =
 Window.setOnLoad window all_links
 ```
 #### Fetch a json resource from some server (Query the GitHub API?)
+Uses [bs-json](https://github.com/BuckleTypes/bs-json) and [bs-fetch](https://github.com/BuckleTypes/bs-fetch)
 
+```ml
+open Bs_fetch  
+
+(* given an array of repositories object as a JSON string *)
+(* returns an array of names *)
+let names text = 
+    match Js.Json.parseExn text with
+    | arr -> 
+        Json.Decode.(array (field "name" string) arr)
+    | exception _ -> failwith ("Error parsing: " ^ text)
+
+(* fetch all public repositories of user [BuckleTypes] *)
+(* print their names to the console *)
+let githubRepos () = Js.Promise.(
+    fetch "https://api.github.com/users/BuckleTypes/repos"
+    |> then_ Response.text
+    |> then_ (fun text -> 
+        text 
+        |> names
+        |> Array.iter Js.log 
+        |> resolve)
+    |> ignore
+)
+
+let () = githubRepos ()
+```
 ## Node-specific
 
 #### Read lines from a text file
