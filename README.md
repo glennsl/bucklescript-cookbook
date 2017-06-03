@@ -177,7 +177,7 @@ let all_links () =
     |> (function
         | None -> "Not an Element" 
         | Some el -> Element.innerHTML el)
-    |> Js.log )
+    |> Js.log)
 
 Window.setOnLoad window all_links
 ```
