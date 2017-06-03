@@ -88,9 +88,12 @@ external  atob : string -> string = "window.atob" [@@bs.val]
 
 let _ =  "Hello World!" |> btoa |> atob |> Js.log
 ```
-Alternatively, if you have [bs-webapi](https://github.com/BuckleTypes/bs-webapi-incubator) installed, you can use `btoa` and `atob` directly:
+
+Alternatively, if you have [bs-webapi](https://github.com/BuckleTypes/bs-webapi-incubator) installed:
 
 ```ml
+open ReasonJS.Base64
+
 let _ =  "Hello World!" |> btoa |> atob |> Js.log
 ```
 
@@ -158,8 +161,26 @@ external leftpad : string -> int -> char -> string = "" [@@bs.val] [@@bs.module 
 
 ## Browser-specific
 
-#### Extract all links form a webpage
+#### Extract all links from a webpage
 
+```ml
+open ReasonJs.Dom
+open Document
+
+let all_links () =
+  document
+  |> querySelectorAll "a"
+  |> NodeList.toArray
+  |> Array.iter (fun n -> 
+    n 
+    |> Element.ofNode
+    |> (function
+        | None -> "Not an Element" 
+        | Some el -> Element.innerHTML el)
+    |> Js.log)
+
+Window.setOnLoad window all_links
+```
 #### Fetch a json resource from some server (Query the GitHub API?)
 
 ## Node-specific
