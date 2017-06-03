@@ -161,8 +161,26 @@ external leftpad : string -> int -> char -> string = "" [@@bs.val] [@@bs.module 
 
 ## Browser-specific
 
-#### Extract all links form a webpage
+#### Extract all links from a webpage
 
+```ml
+open ReasonJs.Dom
+open Document
+
+let all_links () =
+  document
+  |> querySelectorAll "a"
+  |> NodeList.toArray
+  |> Array.iter (fun n -> 
+    n 
+    |> Element.ofNode
+    |> (function
+        | None -> "Not an Element" 
+        | Some el -> Element.innerHTML el)
+    |> Js.log )
+
+Window.setOnLoad window all_links
+```
 #### Fetch a json resource from some server (Query the GitHub API?)
 
 ## Node-specific
