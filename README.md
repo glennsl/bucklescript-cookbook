@@ -102,8 +102,7 @@ let _ =  "Hello World!" |> btoa |> atob |> Js.log
 Use [Random module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Random.html) to generate random numbers
 
 ```ml
-let () = 
-  Js.log (Random.int 5)
+Js.log (Random.int 5)
 ```
 
 #### Log a message to the console
@@ -113,6 +112,13 @@ Js.log "Hello BuckleScript!"
 ```
 
 #### Use string interpolation
+
+```ml
+let () =
+  let world = {j|World|j} in
+  let hello_world = {j|Hello，$world|j} in
+  Js.log hello_world
+```
 
 #### Format a string using Printf
 
