@@ -240,7 +240,7 @@ let decodeName text =
 
 let () =
     (* read [package.json] file *)
-    Node_fs.readFileSync "package.json" `utf8
+    Node.Fs.readFileSync "package.json" `utf8
     |> decodeName
     |> Js.log
 ```
