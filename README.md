@@ -260,6 +260,6 @@ Uses [Child_process](https://bloomberg.github.io/bucklescript/api/Node.Child_pro
 ```ml
 let () =
     (* prints node's version *)
-    Node_child_process.(execSync "node -v" (option ~encoding:"utf8" ()))
+    Node.Child_process.(execSync "node -v" (option ~encoding:"utf8" ()))
     |> Js.log
 ```
