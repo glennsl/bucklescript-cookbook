@@ -92,7 +92,7 @@ let _ =  "Hello World!" |> btoa |> atob |> Js.log
 Alternatively, if you have [bs-webapi](https://github.com/BuckleTypes/bs-webapi-incubator) installed:
 
 ```ml
-open ReasonJS.Base64
+open ReasonJs.Base64
 
 let _ =  "Hello World!" |> btoa |> atob |> Js.log
 ```
