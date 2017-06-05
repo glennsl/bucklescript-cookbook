@@ -219,6 +219,47 @@ let () = printGithubRepos ()
 ## Node-specific
 
 #### Read lines from a text file
+
+```ml
+let () =
+    Node_fs.readFileSync "README.md" `utf8
+    |> Js.String.split "\n"
+    |> Array.iter Js.log
+```
+
 #### Read and parse a JSON file
+Uses [bs-json](https://github.com/BuckleTypes/bs-json)
+```ml
+let decodeName text =
+  (* parse JSON *)
+  match Js.Json.parseExn text with
+    | obj -> 
+        (* decode the field [name] *)
+        Json.Decode.(field "name" string obj)
+    | exception _ -> failwith ("Error parsing: " ^ text)
+
+let () =
+    (* read [package.json] file *)
+    Node_fs.readFileSync "package.json" `utf8
+    |> decodeName
+    |> Js.log
+```
 #### Find files using a given predicate
+Uses [Glob](https://github.com/isaacs/node-glob)
+```ml
+type err
+external glob : string -> (err -> string array -> unit) -> unit = "" [@@bs.module]
+
+let () =
+    (* find all javascript files in  subfolders *)
+    glob "**/*.js" (fun _ files -> Array.iter Js.log files)
+```
+
 #### Run an external command
+Uses [Child_process](https://bloomberg.github.io/bucklescript/api/Node.Child_process.html)
+```ml
+let () =
+    (* prints node's version *)
+    Node_child_process.(execSync "node -v" (option ~encoding:"utf8" ()))
+    |> Js.log
+```
