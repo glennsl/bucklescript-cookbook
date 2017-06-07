@@ -219,6 +219,40 @@ let () = printGithubRepos ()
 ## Node-specific
 
 #### Read lines from a text file
+Uses [bs-node](https://github.com/BuckleTypes/bs-node)
+```ml
+let () =
+  Node.Fs.readFileAsUtf8Sync "README.md"
+  |> Js.String.split "\n"
+  |> Array.iter Js.log
+```
+
 #### Read and parse a JSON file
+Uses [bs-json](https://github.com/BuckleTypes/bs-json) and [bs-node](https://github.com/BuckleTypes/bs-node)
+```ml
+let decodeName text =
+  Js.Json.parseExn text
+  |> Json.Decode.(field "name" string)
+
+let () =
+  (* read [package.json] file *)
+  Node.Fs.readFileAsUtf8Sync "package.json"
+  |> decodeName
+  |> Js.log
+```
 #### Find files using a given predicate
+Uses [bs-glob](https://github.com/BuckleTypes/bs-glob)
+```ml
+let () =
+  (* find and list all javascript files in subfolders *)
+  Glob.glob "**/*.js" (fun _ files -> Array.iter Js.log files)
+```
+
 #### Run an external command
+Uses [bs-node](https://github.com/BuckleTypes/bs-node)
+```ml
+let () =
+  (* prints node's version *)
+  Node.(ChildProcess.execSync "node -v" (Options.options ~encoding:"utf8" ()))
+  |> Js.log
+```
