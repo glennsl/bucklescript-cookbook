@@ -31,6 +31,10 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
 
 <!-- tocstop -->
 
+## Reason
+
+All examples in this document use plain OCaml syntax. If you'd rather have a more [Reason](https://facebook.github.io/reason/)able syntax, the examples can be easily be converted using [reason-tools](https://github.com/reasonml/reason-tools), either by installing the browser extension ([Chrome](https://chrome.google.com/webstore/detail/reason-tools/kmdelnjbembbiodplmhgfjpecibfhadd) | [Firefox](https://addons.mozilla.org/en-US/firefox/addon/reason-tools/)), or [directly](https://reasonml.github.io/reason-tools/popup.html).
+
 ## Contributing
 
 There are primarily two ways to contribute:
