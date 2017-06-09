@@ -86,7 +86,8 @@ To encode and decode Base64, you can bind to Javascript functions `btoa` and `at
 external  btoa : string -> string = "window.btoa" [@@bs.val]
 external  atob : string -> string = "window.atob" [@@bs.val]
 
-let _ =  "Hello World!" |> btoa |> atob |> Js.log
+let () =
+  "Hello World!" |> btoa |> atob |> Js.log
 ```
 
 Alternatively, if you have [bs-webapi](https://github.com/BuckleTypes/bs-webapi-incubator) installed:
@@ -94,7 +95,8 @@ Alternatively, if you have [bs-webapi](https://github.com/BuckleTypes/bs-webapi-
 ```ml
 open ReasonJs.Base64
 
-let _ =  "Hello World!" |> btoa |> atob |> Js.log
+let () =
+  "Hello World!" |> btoa |> atob |> Js.log
 ```
 
 #### Generate random numbers
@@ -102,13 +104,15 @@ let _ =  "Hello World!" |> btoa |> atob |> Js.log
 Use [Random module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Random.html) to generate random numbers
 
 ```ml
-Js.log (Random.int 5)
+let () =
+  Js.log (Random.int 5)
 ```
 
 #### Log a message to the console
 
 ```ml
-Js.log "Hello BuckleScript!"
+let () =
+  Js.log "Hello BuckleScript!"
 ```
 
 #### Use string interpolation
@@ -124,7 +128,9 @@ let () =
 Use [Printf module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Printf.html)
 
 ```ml
-# Printf.printf ("Foo %d  %s") 2 "bar"
+(* Prints "Foo 2 bar" *)
+let () =
+  Printf.printf ("Foo %d %s") 2 "bar"
 ```
 
 #### Make and use a Map
@@ -185,7 +191,8 @@ let printAllLinks () =
         | Some el -> Element.innerHTML el)
     |> Js.log)
 
-Window.setOnLoad window printAllLinks
+let () =
+  Window.setOnLoad window printAllLinks
 ```
 #### Query the GitHub API
 Uses [bs-json](https://github.com/BuckleTypes/bs-json) and [bs-fetch](https://github.com/BuckleTypes/bs-fetch)
@@ -213,7 +220,8 @@ let printGithubRepos () = Js.Promise.(
   |> ignore
 )
 
-let () = printGithubRepos ()
+let () =
+  printGithubRepos ()
 ```
 ## Node-specific
 
