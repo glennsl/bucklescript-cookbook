@@ -137,7 +137,10 @@ let () =
 
 To create a Map, use the Map.Make functor. It expects a module with the folowing signature:
 ```ml
-module type OrderedType = sig type t val compare : t -> t -> int end
+sig
+  type t
+  val compare : t -> t -> int
+end
 ```
 
 For instance, to create the map which associate 1 to "ocaml" and 2 to "bs":
