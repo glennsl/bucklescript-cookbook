@@ -22,7 +22,7 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
     + [Define composable bitflags constants](#define-composable-bitflags-constants)
 - [Browser-specific](#browser-specific)
     + [Extract all links form a webpage](#extract-all-links-form-a-webpage)
-    + [Fetch a json resource from some server (Query the GitHub API?)](#fetch-a-json-resource-from-some-server-query-the-github-api)
+    + [Query the GitHub API](#query-the-github-api)
 - [Node-specific](#node-specific)
     + [Read lines from a text file](#read-lines-from-a-text-file)
     + [Read and parse a JSON file](#read-and-parse-a-json-file)
@@ -187,7 +187,7 @@ let printAllLinks () =
 
 Window.setOnLoad window printAllLinks
 ```
-#### Fetch a json resource from some server (Query the GitHub API?)
+#### Query the GitHub API
 Uses [bs-json](https://github.com/BuckleTypes/bs-json) and [bs-fetch](https://github.com/BuckleTypes/bs-fetch)
 
 ```ml
