@@ -124,7 +124,7 @@ let () =
 ```ml
 let () =
   let world = "World" in
-  Js.log {j|Hello，$world!|j}
+  Js.log {j|Hello $world!|j}
 ```
 
 #### Format a string using Printf
