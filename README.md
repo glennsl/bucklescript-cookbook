@@ -219,6 +219,12 @@ let person = [%obj {
 }]
 ```
 
+#### Catch a JavaScript exception
+TODO
+
+#### Raise a JavaScript exception
+TODO
+
 #### Define composable bitflags constants
 TODO
 
