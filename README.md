@@ -137,6 +137,31 @@ let () =
   Printf.printf ("Foo %d %s") 2 "bar"
 ```
 
+#### Extract specific HTML tags from an HTML document using a Regular Expression
+
+```ml
+let input = {|
+<html>
+  <head>
+    <title>A Simple HTML Document</title>
+  </head>
+  <body>
+    <p>This is a very simple HTML document</p>
+    <p>It only has two paragraphs</p>
+  </body>
+</html>
+|}
+
+let () = 
+  input
+  |> Js.String.match_ [%re "/<p\\b[^>]*>(.*?)<\\/p>/gi"]
+  |> function
+    | Some result -> result
+      |> Array.iter Js.log
+    | None ->
+      Js.log "no matches"
+```
+
 #### Make and use a Map
 
 To create a Map, use the Map.Make functor. It expects a module with the folowing signature, where `t` is the type of the key:
