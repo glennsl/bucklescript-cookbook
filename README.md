@@ -139,7 +139,7 @@ let () =
 
 #### Make and use a Map
 
-To create a Map, use the Map.Make functor. It expects a module with the folowing signature:
+To create a Map, use the Map.Make functor. It expects a module with the folowing signature, where `t` is the type of the key:
 ```ml
 sig
   type t
@@ -147,22 +147,26 @@ sig
 end
 ```
 
-For instance, to create the map which associate 1 to "ocaml" and 2 to "bs":
+To create the map which associate 1 to "ocaml" and 2 to "bs":
 ```ml
 let () = 
+
   (* create a module IntMap *)
   let module IntMap = 
-    Map.Make(struct type t = int let compare = compare end) in
+    Map.Make(struct
+      type t = int
+      let compare = compare
+    end) in
   
-  let open IntMap in
-    (* create a map with keys 1 and 2 *)
-    let map12 = empty |> add 1 "ocaml" |> add 2 "bs" in
+  (* create a map with keys 1 and 2 *)
+  let myMap = IntMap.empty
+    |> IntMap.add 1 "ocaml"
+    |> IntMap.add 2 "bs"
+  in
 
-    (* print each key, value pair *)
-    let printKV k v = 
-      let k = string_of_int k in 
-      Js.log {j|key:$k, val:$v|j} in
-    iter printKV map12;
+  (* print each key, value pair *)
+  myMap
+  |> IntMap.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
 ```
 
 ## FFI
