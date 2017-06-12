@@ -45,6 +45,8 @@ There are primarily two ways to contribute:
 ## General
 
 #### Serialize a record to JSON
+TODO
+
 #### Deserialize JSON to a record
 Uses [bs-json](https://github.com/BuckleTypes/bs-json)
 ```ml
@@ -207,6 +209,7 @@ external leftpad : string -> int -> char -> string = "" [@@bs.val] [@@bs.module 
 ```
 
 #### Define composable bitflags constants
+TODO
 
 ## Browser-specific
 
@@ -299,3 +302,6 @@ let () =
   Node.(ChildProcess.execSync "node -v" (Options.options ~encoding:"utf8" ()))
   |> Js.log
 ```
+
+#### Parse command-line arguments
+TODO (requires bindings to minimist, commander or a similar library)
