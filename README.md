@@ -208,6 +208,17 @@ external random : unit -> float = "Math.random" [@@bs.val]
 external leftpad : string -> int -> char -> string = "" [@@bs.val] [@@bs.module "left-pad"]
 ```
 
+#### Create a Plain Old JavaScript Object
+```ml
+let person = [%obj {
+  name = {
+    first = "Bob";
+    last = "Zhmith"
+  };
+  age = 32
+}]
+```
+
 #### Define composable bitflags constants
 TODO
 
