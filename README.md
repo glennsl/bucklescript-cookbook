@@ -45,7 +45,44 @@ There are primarily two ways to contribute:
 ## General
 
 #### Serialize a record to JSON
-TODO
+```ml
+type line = {
+  start: point;
+  end_: point;
+  thickness: int option
+}
+and point = {
+  x: float;
+  y: float
+}
+
+module Encode = struct
+  let point r =
+    let open! Json.Encode in (
+      object_ [
+        ("x", float r.x);
+        ("y", float r.y)
+      ]
+    )
+  let line r =
+    Json.Encode.(
+      object_ [
+        ("start", point r.start);
+        ("end", point r.end_);
+        ("thickness", match r.thickness with Some x -> int x | None -> null)
+      ]
+    )
+end
+
+let data = {
+  start = { x = 1.1; y = -0.4 };
+  end_ = { x = 5.3; y = 3.8 };
+  thickness = Some 2
+}
+
+let json = data |> Encode.line
+                |> Js.Json.stringify
+```
 
 #### Deserialize JSON to a record
 Uses [bs-json](https://github.com/BuckleTypes/bs-json)
