@@ -85,7 +85,7 @@ let json = data |> Encode.line
 ```
 
 #### Deserialize JSON to a record
-Uses [bs-json](https://github.com/BuckleTypes/bs-json)
+Uses [bs-json](https://github.com/reasonml-community/bs-json)
 ```ml
 type line = {
   start: point;
@@ -133,7 +133,7 @@ let () =
   "Hello World!" |> btoa |> atob |> Js.log
 ```
 
-Alternatively, if you have [bs-webapi](https://github.com/BuckleTypes/bs-webapi-incubator) installed:
+Alternatively, if you have [bs-webapi](https://github.com/reasonml-community/bs-webapi-incubator) installed:
 
 ```ml
 open ReasonJs.Base64
@@ -288,7 +288,7 @@ let () =
   Window.setOnLoad window printAllLinks
 ```
 #### Query the GitHub API
-Uses [bs-json](https://github.com/BuckleTypes/bs-json) and [bs-fetch](https://github.com/BuckleTypes/bs-fetch)
+Uses [bs-json](https://github.com/reasonml-community/bs-json) and [bs-fetch](https://github.com/reasonml-community/bs-fetch)
 
 ```ml
 open Bs_fetch  
@@ -319,7 +319,7 @@ let () =
 ## Node-specific
 
 #### Read lines from a text file
-Uses [bs-node](https://github.com/BuckleTypes/bs-node)
+Uses [bs-node](https://github.com/reasonml-community/bs-node)
 ```ml
 let () =
   Node.Fs.readFileAsUtf8Sync "README.md"
@@ -328,7 +328,7 @@ let () =
 ```
 
 #### Read and parse a JSON file
-Uses [bs-json](https://github.com/BuckleTypes/bs-json) and [bs-node](https://github.com/BuckleTypes/bs-node)
+Uses [bs-json](https://github.com/reasonml-community/bs-json) and [bs-node](https://github.com/reasonml-community/bs-node)
 ```ml
 let decodeName text =
   Js.Json.parseExn text
@@ -341,7 +341,7 @@ let () =
   |> Js.log
 ```
 #### Find files using a given predicate
-Uses [bs-glob](https://github.com/BuckleTypes/bs-glob)
+Uses [bs-glob](https://github.com/reasonml-community/bs-glob)
 ```ml
 let () =
   (* find and list all javascript files in subfolders *)
@@ -349,7 +349,7 @@ let () =
 ```
 
 #### Run an external command
-Uses [bs-node](https://github.com/BuckleTypes/bs-node)
+Uses [bs-node](https://github.com/reasonml-community/bs-node)
 ```ml
 let () =
   (* prints node's version *)
