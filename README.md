@@ -300,10 +300,10 @@ let names text =
   |> Js.Json.parseExn
   |> Json.Decode.(array (field "name" string))
 
-(* fetch all public repositories of user [BuckleTypes] *)
+(* fetch all public repositories of user [reasonml-community] *)
 (* print their names to the console *)
 let printGithubRepos () = Js.Promise.(
-  fetch "https://api.github.com/users/BuckleTypes/repos"
+  fetch "https://api.github.com/users/reasonml-community/repos"
   |> then_ Response.text
   |> then_ (fun text -> 
       text 
