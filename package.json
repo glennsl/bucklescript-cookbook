@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/glennsl/bucklescript-cookbook#readme",
   "dependencies": {
-    "bs-plaform": "blomberg/bucklescript",
+    "bs-plaform": "bucklescript/bucklescript",
     "markdown-toc": "^1.1.0",
     "md-codecheck": "glennsl/md-codecheck"
   }
