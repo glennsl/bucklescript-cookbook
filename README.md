@@ -265,6 +265,21 @@ TODO
 #### Define composable bitflags constants
 TODO
 
+#### Bind to a function that takes a avriableriable number of arguments of different types
+```ml
+module Arg = struct
+  type t
+
+  external int : int -> t = "%identity"
+  external string : string -> t = "%identity"
+end
+
+external executeCommand : string -> Arg.t array -> unit = "" [@@bs.val] [@@bs.splice]
+
+let () =
+  executeCommand "copy" Arg.[|string "text/html"; int 2|]
+```
+
 ## Browser-specific
 
 #### Extract all links from a webpage
