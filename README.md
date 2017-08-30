@@ -127,11 +127,13 @@ let line = data |> Js.Json.parseExn
 To encode and decode Base64, you can bind to Javascript functions `btoa` and `atob`, respectively:
 
 ```ml
-external  btoa : string -> string = "window.btoa" [@@bs.val]
-external  atob : string -> string = "window.atob" [@@bs.val]
+external btoa : string -> string = "" [@@bs.val]
+external atob : string -> string = "" [@@bs.val]
 
 let () =
-  "Hello World!" |> btoa |> atob |> Js.log
+  let text = "Hello World!" in
+  Js.log (text |> btoa);
+  Js.log (text |> btoa |> atob)
 ```
 
 Alternatively, if you have [bs-webapi](https://github.com/reasonml-community/bs-webapi-incubator) installed:
@@ -140,7 +142,9 @@ Alternatively, if you have [bs-webapi](https://github.com/reasonml-community/bs-
 open ReasonJs.Base64
 
 let () =
-  "Hello World!" |> btoa |> atob |> Js.log
+  let text = "Hello World!" in
+  Js.log (text |> btoa);
+  Js.log (text |> btoa |> atob)
 ```
 
 #### Generate random numbers
