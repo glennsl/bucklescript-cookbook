@@ -205,7 +205,7 @@ let () =
   |> Js.String.match_ [%re "/<p\\b[^>]*>(.*?)<\\/p>/gi"]
   |> function
     | Some result -> result
-      |> Array.iter Js.log
+      |> Js.Array.forEach Js.log
     | None ->
       Js.log "no matches"
 ```
