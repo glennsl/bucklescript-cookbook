@@ -162,8 +162,12 @@ let () =
 
 ```ml
 let () =
-  let world = "World" in
-  Js.log {j|Hello $world!|j}
+  for a = 1 to 10 do
+    for b = 1 to 10 do
+      let product = a * b in
+      Js.log {j|$a times $b is $product|j}
+    done
+  done
 ```
 
 #### Format a string using Printf
