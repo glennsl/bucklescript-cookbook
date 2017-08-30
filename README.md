@@ -45,6 +45,7 @@ There are primarily two ways to contribute:
 ## General
 
 #### Serialize a record to JSON
+Uses [bs-json](https://github.com/reasonml-community/bs-json)
 ```ml
 type line = {
   start: point;
