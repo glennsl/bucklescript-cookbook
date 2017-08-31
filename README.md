@@ -6,6 +6,7 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
 
 <!-- toc -->
 
+- [Reason](#reason)
 - [Contributing](#contributing)
 - [General](#general)
     + [Serialize a record to JSON](#serialize-a-record-to-json)
@@ -15,19 +16,29 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
     + [Log a message to the console](#log-a-message-to-the-console)
     + [Use string interpolation](#use-string-interpolation)
     + [Format a string using Printf](#format-a-string-using-printf)
-    + [Make and usa a Map](#make-and-usa-a-map)
+    + [Extract specific HTML tags from an HTML document using a Regular Expression](#extract-specific-html-tags-from-an-html-document-using-a-regular-expression)
+    + [Create a map data structure, add or replace an entry, and print each key/value pair](#create-a-map-data-structure-add-or-replace-an-entry-and-print-each-keyvalue-pair)
+      - [Map](#map)
+      - [Js.Dict](#jsdict)
+      - [Associative list](#associative-list)
+      - [Hashtbl](#hashtbl)
 - [FFI](#ffi)
     + [Bind to a simple function](#bind-to-a-simple-function)
     + [Bind to a function in another module](#bind-to-a-function-in-another-module)
+    + [Create a Plain Old JavaScript Object](#create-a-plain-old-javascript-object)
+    + [Catch a JavaScript exception](#catch-a-javascript-exception)
+    + [Raise a JavaScript exception](#raise-a-javascript-exception)
     + [Define composable bitflags constants](#define-composable-bitflags-constants)
+    + [Bind to a function that takes a avriableriable number of arguments of different types](#bind-to-a-function-that-takes-a-avriableriable-number-of-arguments-of-different-types)
 - [Browser-specific](#browser-specific)
-    + [Extract all links form a webpage](#extract-all-links-form-a-webpage)
+    + [Extract all links from a webpage](#extract-all-links-from-a-webpage)
     + [Query the GitHub API](#query-the-github-api)
 - [Node-specific](#node-specific)
     + [Read lines from a text file](#read-lines-from-a-text-file)
     + [Read and parse a JSON file](#read-and-parse-a-json-file)
     + [Find files using a given predicate](#find-files-using-a-given-predicate)
     + [Run an external command](#run-an-external-command)
+    + [Parse command-line arguments](#parse-command-line-arguments)
 
 <!-- tocstop -->
 
