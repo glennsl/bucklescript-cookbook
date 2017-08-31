@@ -32,7 +32,7 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
     + [Create a Plain Old JavaScript Object](#create-a-plain-old-javascript-object)
     + [Raise a javascript exception, then catch it and print its message](#raise-a-javascript-exception-then-catch-it-and-print-its-message)
     + [Define composable bitflags constants](#define-composable-bitflags-constants)
-    + [Bind to a function that takes a avriableriable number of arguments of different types](#bind-to-a-function-that-takes-a-avriableriable-number-of-arguments-of-different-types)
+    + [Bind to a function that takes a variable number of arguments of different types](#bind-to-a-function-that-takes-a-variable-number-of-arguments-of-different-types)
 - [Browser-specific](#browser-specific)
     + [Extract all links from a webpage](#extract-all-links-from-a-webpage)
     + [Query the GitHub API](#query-the-github-api)
@@ -403,7 +403,7 @@ let () =
 #### Define composable bitflags constants
 TODO
 
-#### Bind to a function that takes a avriableriable number of arguments of different types
+#### Bind to a function that takes a variable number of arguments of different types
 ```ml
 module Arg = struct
   type t
