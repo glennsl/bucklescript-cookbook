@@ -210,36 +210,102 @@ let () =
       Js.log "no matches"
 ```
 
-#### Make and use a Map
+#### Create a map data structure, add or replace an entry, and print each key/value pair
 
-To create a Map, use the Map.Make functor. It expects a module with the folowing signature, where `t` is the type of the key:
-```ml
-sig
-  type t
-  val compare : t -> t -> int
-end
-```
+##### Map
 
-To create the map which associate 1 to "ocaml" and 2 to "bs":
+Immutable, any key type, cross-platform
+
 ```ml
 let () = 
 
-  (* create a module IntMap *)
-  let module IntMap = 
-    Map.Make(struct
-      type t = int
+  let module StringMap = 
+    Map.Make (struct
+      type t = string
       let compare = compare
     end) in
   
-  (* create a map with keys 1 and 2 *)
-  let myMap = IntMap.empty
-    |> IntMap.add 1 "ocaml"
-    |> IntMap.add 2 "bs"
-  in
+  let painIndexMap = StringMap.(
+  	empty
+  	|> add "western paper wasp" 1.0
+    |> add "yellowjacket" 2.0
+    |> add "honey bee" 2.0
+    |> add "red paper wasp" 3.0
+    |> add "tarantula hawk" 4.0
+    |> add "bullet ant" 4.0
+  ) in
 
-  (* print each key, value pair *)
-  myMap
-  |> IntMap.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
+  painIndexMap |> StringMap.add "bumble bee" 2.0
+  			   |> StringMap.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
+```
+
+##### Js.Dict
+
+Mutable, string key type, BuckleScript only
+
+```ml
+let painIndexMap =
+  Js.Dict.fromList [
+  	"western paper wasp", 1.0;
+    "yellowjacket", 2.0;
+    "honey bee", 2.0;
+    "red paper wasp", 3.0;
+    "tarantula hawk", 4.0;
+    "bullet ant", 4.0
+  ]
+  
+let () =
+    Js.Dict.set painIndexMap "bumble bee" 2.0
+
+let () =
+  painIndexMap |> Js.Dict.entries
+  			   |> Js.Array.forEach (fun (k,v)  -> Js.log {j|key:$k, val:$v|j})
+```
+
+##### Associative list
+
+Immutable, any key type, cross-platform
+
+```ml
+let painIndexMap = [
+  "western paper wasp", 1.0;
+  "yellowjacket", 2.0;
+  "honey bee", 2.0;
+  "red paper wasp", 3.0;
+  "tarantula hawk", 4.0;
+  "bullet ant", 4.0
+]
+
+let addOrReplace (k, v) l =
+  let l' = List.remove_assoc k l in
+  (k, v) :: l'
+  
+let () =
+  painIndexMap |> addOrReplace ("bumble bee", 2.0)
+  			   |> List.iter (fun (k,v)  -> Js.log {j|key:$k, val:$v|j})
+```
+
+##### Hashtbl
+
+Mutable, string key type, cross-platform
+
+```ml
+let painIndexMap = Hashtbl.create 10
+let () =
+  Hashtbl.(
+    add painIndexMap "western paper wasp" 1.0;
+    add painIndexMap "yellowjacket" 2.0;
+    add painIndexMap "honey bee" 2.0;
+    add painIndexMap "red paper wasp" 3.0;
+    add painIndexMap "tarantula hawk" 4.0;
+    add painIndexMap "bullet ant" 4.0;
+  )
+
+let () = 
+  Hashtbl.replace painIndexMap "bumble bee" 2.0
+
+let () =
+  painIndexMap |> Hashtbl.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
 ```
 
 ## FFI
