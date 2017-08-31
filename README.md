@@ -25,6 +25,10 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
 - [FFI](#ffi)
     + [Bind to a simple function](#bind-to-a-simple-function)
     + [Bind to a function in another module](#bind-to-a-function-in-another-module)
+    + [Bind to a function overloaded to take an argument of several different types](#bind-to-a-function-overloaded-to-take-an-argument-of-several-different-types)
+      - [Mutiple externals](#mutiple-externals)
+      - [bs.unwrap](#bsunwrap)
+      - [GADT](#gadt)
     + [Create a Plain Old JavaScript Object](#create-a-plain-old-javascript-object)
     + [Catch a JavaScript exception](#catch-a-javascript-exception)
     + [Raise a JavaScript exception](#raise-a-javascript-exception)
@@ -329,6 +333,49 @@ external random : unit -> float = "Math.random" [@@bs.val]
 #### Bind to a function in another module
 ```ml
 external leftpad : string -> int -> char -> string = "" [@@bs.val] [@@bs.module "left-pad"]
+```
+
+#### Bind to a function overloaded to take an argument of several different types
+
+##### Mutiple externals
+```ml
+module Date = struct
+  type t
+  
+  external fromValue : float -> t = "Date" [@@bs.new]
+  external fromString : string -> t = "Date" [@@bs.new]
+end
+
+let date1 = Date.fromValue 107849354.
+let date2 = Date.fromString "1995-12-17T03:24:00"
+```
+
+##### bs.unwrap
+```ml
+module Date = struct
+  type t
+  
+  external make : ([`Value of float | `String of string] [@bs.unwrap]) -> t = "Date" [@@bs.new]
+end
+
+let date1 = Date.make (`Value 107849354.)
+let date2 = Date.make (`String "1995-12-17T03:24:00")
+```
+
+##### GADT
+```ml
+module Date = struct
+  type t
+  
+  type 'a makeArg =
+  | Value : float makeArg
+  | String : string makeArg
+  
+  external make : ('a makeArg [@bs.ignore]) -> 'a -> t = "Date" [@@bs.new]
+end
+
+let date1 = Date.make Value 107849354.
+let date2 = Date.make String "1995-12-17T03:24:00"
 ```
 
 #### Create a Plain Old JavaScript Object
