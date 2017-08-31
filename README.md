@@ -30,8 +30,7 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
       - [bs.unwrap](#bsunwrap)
       - [GADT](#gadt)
     + [Create a Plain Old JavaScript Object](#create-a-plain-old-javascript-object)
-    + [Catch a JavaScript exception](#catch-a-javascript-exception)
-    + [Raise a JavaScript exception](#raise-a-javascript-exception)
+    + [Raise a javascript exception, then catch it and print its message](#raise-a-javascript-exception-then-catch-it-and-print-its-message)
     + [Define composable bitflags constants](#define-composable-bitflags-constants)
     + [Bind to a function that takes a avriableriable number of arguments of different types](#bind-to-a-function-that-takes-a-avriableriable-number-of-arguments-of-different-types)
 - [Browser-specific](#browser-specific)
@@ -389,11 +388,17 @@ let person = [%obj {
 }]
 ```
 
-#### Catch a JavaScript exception
-TODO
-
-#### Raise a JavaScript exception
-TODO
+#### Raise a javascript exception, then catch it and print its message
+```ml
+let () =
+  try
+    Js.Exn.raiseError "oops!"
+  with
+  | Js.Exn.Error e ->
+    match Js.Exn.message e with
+    | Some message -> Js.log {j|Error: $message|j}
+    | None -> Js.log "An unknown error occurred"
+```
 
 #### Define composable bitflags constants
 TODO
