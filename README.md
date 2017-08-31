@@ -237,8 +237,8 @@ let () =
     end) in
   
   let painIndexMap = StringMap.(
-  	empty
-  	|> add "western paper wasp" 1.0
+    empty
+    |> add "western paper wasp" 1.0
     |> add "yellowjacket" 2.0
     |> add "honey bee" 2.0
     |> add "red paper wasp" 3.0
@@ -247,7 +247,7 @@ let () =
   ) in
 
   painIndexMap |> StringMap.add "bumble bee" 2.0
-  			   |> StringMap.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
+               |> StringMap.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
 ```
 
 ##### Js.Dict
@@ -257,7 +257,7 @@ Mutable, string key type, BuckleScript only
 ```ml
 let painIndexMap =
   Js.Dict.fromList [
-  	"western paper wasp", 1.0;
+    "western paper wasp", 1.0;
     "yellowjacket", 2.0;
     "honey bee", 2.0;
     "red paper wasp", 3.0;
@@ -270,7 +270,7 @@ let () =
 
 let () =
   painIndexMap |> Js.Dict.entries
-  			   |> Js.Array.forEach (fun (k,v)  -> Js.log {j|key:$k, val:$v|j})
+               |> Js.Array.forEach (fun (k, v) -> Js.log {j|key:$k, val:$v|j})
 ```
 
 ##### Associative list
@@ -293,7 +293,7 @@ let addOrReplace (k, v) l =
   
 let () =
   painIndexMap |> addOrReplace ("bumble bee", 2.0)
-  			   |> List.iter (fun (k,v)  -> Js.log {j|key:$k, val:$v|j})
+               |> List.iter (fun (k, v) -> Js.log {j|key:$k, val:$v|j})
 ```
 
 ##### Hashtbl
