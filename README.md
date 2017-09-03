@@ -153,7 +153,7 @@ let () =
 Alternatively, if you have [bs-webapi](https://github.com/reasonml-community/bs-webapi-incubator) installed:
 
 ```ml
-open ReasonJs.Base64
+open Bs_webapi.Base64
 
 let () =
   let text = "Hello World!" in
@@ -423,7 +423,7 @@ let () =
 #### Extract all links from a webpage
 
 ```ml
-open ReasonJs.Dom
+open Bs_webapi.Dom
 
 let printAllLinks () =
   document
