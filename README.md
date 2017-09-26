@@ -322,6 +322,155 @@ let () =
   painIndexMap |> Hashtbl.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
 ```
 
+#### Using promises
+
+##### Creating new promises
+```reason
+let okPromise = Js.Promise.make (fun ::resolve reject::_ => resolve "ok" [@bs]);
+
+/* Simpler promise creation for static values */
+Js.Promise.resolve "easy";
+
+Js.Promise.reject (Invalid_argument "too easy");
+
+/* Create a promise that resolves much later */
+let timer =
+  Js.Promise.make (
+    fun ::resolve reject::_ => {
+      /* `ignore` returns `unit`; it's just to get rid of compiler warning about
+         unassigned expressions not returning `unit` */
+      ignore (Js.Global.setTimeout (fun () => resolve "Done!" [@bs]) 1000);
+      ()
+    }
+  );
+```
+
+##### Handling promise values
+
+```reason
+/*
+ * Note that we *have* to return a new promise inside of the callback given to then_;
+ */
+Js.Promise.then_ (fun value => Js.Promise.resolve (Js.log value)) okPromise;
+
+/* Chaining */
+Js.Promise.then_
+  (fun value => Js.Promise.resolve (Js.log value))
+  (Js.Promise.then_ (fun value => Js.Promise.resolve (value + 1)) (Js.Promise.resolve 1));
+
+/* Better with pipes 😉 */
+Js.Promise.resolve 1
+|> Js.Promise.then_ (fun value => Js.Promise.resolve (value + 1))
+|> Js.Promise.then_ (fun value => Js.Promise.resolve (Js.log value));
+
+/* And even better with some Reason spice */
+Js.Promise.(
+  resolve 1
+  |> then_ (fun value => resolve (value + 1))
+  |> then_ (fun value => resolve (Js.log value))
+);
+
+/* Waiting for two values */
+Js.Promise.(
+  all2 (resolve 1, resolve "a")
+  |> then_ (
+       fun (v1, v2) => {
+         Js.log ("Value 1: " ^ string_of_int v1);
+         Js.log ("Value 2: " ^ v2);
+         resolve ()
+       }
+     )
+);
+
+/* Waiting for an array of values */
+Js.Promise.(
+  all [|resolve 1, resolve 2, resolve 3|]
+  |> then_ (
+       /* This is actually a cheat of Reason/OCaml's pattern matching syntax;
+          We know that this is exhaustive, but the compiler will complain.
+          Use at own risk 🤠 */
+       fun [|v1, v2, v3|] => {
+         Js.log ("Value 1: " ^ string_of_int v1);
+         Js.log ("Value 2: " ^ string_of_int v2);
+         Js.log ("Value 3: " ^ string_of_int v3);
+         resolve ()
+       }
+     )
+);
+```
+
+##### Error handling
+
+```reason
+/* Using a built-in OCaml error */
+let notFoundPromise = Js.Promise.make (fun resolve::_ ::reject => reject Not_found [@bs]);
+
+Js.Promise.then_ (fun value => Js.Promise.resolve (Js.log value)) notFoundPromise
+|> Js.Promise.catch (fun err => Js.Promise.resolve (Js.log err));
+
+/* Using a custom error */
+exception Oh_no string;
+
+let ohNoPromise = Js.Promise.make (fun resolve::_ ::reject => reject (Oh_no "oh no") [@bs]);
+
+Js.Promise.catch (fun err => Js.Promise.resolve (Js.log err)) ohNoPromise;
+
+
+/**
+ * Unfortunately, as one can see - catch expects a very generic `Js.Promise.error` value
+ * that doesn't give us much to do with.
+ * In general, we should not rely on rejecting/catching errors for control flow;
+ * it's much better to use a `result` type instead.
+ */
+let betterOk =
+  Js.Promise.make (fun ::resolve reject::_ => resolve (Js.Result.Ok "everything's fine") [@bs]);
+
+let betterOhNo =
+  Js.Promise.make (fun ::resolve reject::_ => resolve (Js.Result.Error "nope nope nope") [@bs]);
+
+let handleResult =
+  Js.Promise.then_ (
+    fun result =>
+      Js.Promise.resolve (
+        switch result {
+        | Js.Result.Ok text => Js.log ("OK: " ^ text)
+        | Js.Result.Error reason => Js.log ("Oh no: " ^ reason)
+        }
+      )
+  );
+
+handleResult betterOk;
+
+handleResult betterOhNo;
+```
+
+##### "Better living through functions."
+
+This section is for collecting useful helper functions when handling promises
+
+```reason
+/* Get rid of the need for returning a promise every time we use `then_` */
+let thenResolve fn => Js.Promise.then_ (fun value => Js.Promise.resolve (fn value));
+
+/* Get rid of pesky compiler warnings at the end of a side-effectful promise chain */
+let thenIgnore fn p => thenResolve (fun value => fn value) p |> ignore;
+
+Js.Promise.(resolve 1 |> thenResolve (fun value => value + 1) |> thenIgnore Js.log);
+
+/* Do a side effect (e.g. logging) in the middle of a promise chain without changing the value
+let thenTap fn p => thenResolve (fun value => {
+  fn value;
+  value
+});
+
+Js.Promise.resolve 1 
+  |> thenResolve (fun value => value + 1)
+  |> thenTap Js.log
+  |> thenResolve (fun value => value * 2)
+  |> thenIgnore Js.log
+);
+```
+
 ## FFI
 
 #### Bind to a simple function
