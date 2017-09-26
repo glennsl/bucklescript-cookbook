@@ -22,6 +22,11 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
       - [Js.Dict](#jsdict)
       - [Associative list](#associative-list)
       - [Hashtbl](#hashtbl)
+    + [Using promises](#using-promises)
+      - [Creating new promises](#creating-new-promises)
+      - [Handling promise values](#handling-promise-values)
+      - [Error handling](#error-handling)
+      - [Better living through funcitons](#better-living-through-functions)
 - [FFI](#ffi)
     + [Bind to a simple function](#bind-to-a-simple-function)
     + [Bind to a function in another module](#bind-to-a-function-in-another-module)
@@ -457,7 +462,7 @@ let thenIgnore fn p => thenResolve (fun value => fn value) p |> ignore;
 
 Js.Promise.(resolve 1 |> thenResolve (fun value => value + 1) |> thenIgnore Js.log);
 
-/* Do a side effect (e.g. logging) in the middle of a promise chain without changing the value
+/* Do a side effect (e.g. logging) in the middle of a promise chain without changing the value */
 let thenTap fn p => thenResolve (fun value => {
   fn value;
   value
