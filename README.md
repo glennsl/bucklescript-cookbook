@@ -153,7 +153,7 @@ let () =
 Alternatively, if you have [bs-webapi](https://github.com/reasonml-community/bs-webapi-incubator) installed:
 
 ```ml
-open Bs_webapi.Base64
+open Webapi.Base64
 
 let () =
   let text = "Hello World!" in
@@ -423,7 +423,7 @@ let () =
 #### Extract all links from a webpage
 
 ```ml
-open Bs_webapi.Dom
+open Webapi.Dom
 
 let printAllLinks () =
   document
@@ -444,8 +444,6 @@ let () =
 Uses [bs-json](https://github.com/reasonml-community/bs-json) and [bs-fetch](https://github.com/reasonml-community/bs-fetch)
 
 ```ml
-open Bs_fetch  
-
 (* given an array of repositories object as a JSON string *)
 (* returns an array of names *)
 let names text = 
@@ -456,8 +454,8 @@ let names text =
 (* fetch all public repositories of user [reasonml-community] *)
 (* print their names to the console *)
 let printGithubRepos () = Js.Promise.(
-  fetch "https://api.github.com/users/reasonml-community/repos"
-  |> then_ Response.text
+  Fetch.fetch "https://api.github.com/users/reasonml-community/repos"
+  |> then_ Fetch.Response.text
   |> then_ (fun text -> 
       text 
       |> names
