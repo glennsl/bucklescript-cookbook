@@ -363,7 +363,33 @@ external random : unit -> float = "Math.random" [@@bs.val]
 external leftpad : string -> int -> char -> string = "" [@@bs.val] [@@bs.module "left-pad"]
 ```
 
-#### Bind to a function overloaded to take an argument of several different types
+#### Create a Plain Old JavaScript Object
+```ml
+let person = [%obj {
+  name = {
+    first = "Bob";
+    last = "Zhmith"
+  };
+  age = 32
+}]
+```
+
+#### Raise a javascript exception, then catch it and print its message
+```ml
+let () =
+  try
+    Js.Exn.raiseError "oops!"
+  with
+  | Js.Exn.Error e ->
+    match Js.Exn.message e with
+    | Some message -> Js.log {j|Error: $message|j}
+    | None -> Js.log "An unknown error occurred"
+```
+
+#### Define composable bitflags constants
+TODO
+
+#### Bind to a function overloaded to take an argument of several different types (an untagged union)
 
 ##### Mutiple externals
 ```ml
@@ -406,33 +432,7 @@ let date1 = Date.make Value 107849354.
 let date2 = Date.make String "1995-12-17T03:24:00"
 ```
 
-#### Create a Plain Old JavaScript Object
-```ml
-let person = [%obj {
-  name = {
-    first = "Bob";
-    last = "Zhmith"
-  };
-  age = 32
-}]
-```
-
-#### Raise a javascript exception, then catch it and print its message
-```ml
-let () =
-  try
-    Js.Exn.raiseError "oops!"
-  with
-  | Js.Exn.Error e ->
-    match Js.Exn.message e with
-    | Some message -> Js.log {j|Error: $message|j}
-    | None -> Js.log "An unknown error occurred"
-```
-
-#### Define composable bitflags constants
-TODO
-
-#### Bind to a function that takes a variable number of arguments of different types
+#### Bind to a function that takes a variable number of arguments of different types (an untagged union)
 ```ml
 module Arg = struct
   type t
@@ -445,6 +445,26 @@ external executeCommand : string -> Arg.t array -> unit = "" [@@bs.val] [@@bs.sp
 
 let () =
   executeCommand "copy" Arg.[|string "text/html"; int 2|]
+```
+
+#### Bind to a higher-order function that takes a function accepting an argument of several different types (an untagged union)
+
+```ml
+(* Bind to the function, using Js.Jsont.t to capture the untagged union *)
+external withCallback : (Js.Json.t -> unit) -> unit = "" [@@bs.val]
+
+(* Override the binding with a function that wraps the callback in a function that classifies and wraps the argument *)
+let withCallback cb =
+  withCallback (fun json  ->
+    match Js.Json.classify json with
+    | Js.Json.JSONNumber n -> cb (`Float n)
+    | Js.Json.JSONString s -> cb (`String s)
+    | _ -> failwith "unreachable")
+
+(* The function can now be used safely and idiomatically *)
+let () =
+  withCallback (function | `Float n -> Js.log n
+                         | `String s -> Js.log s)
 ```
 
 ## Browser-specific
