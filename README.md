@@ -224,6 +224,35 @@ let () =
       Js.log "no matches"
 ```
 
+Or using [bs-revamp](https://github.com/glennsl/bs-revamp) with the same input:
+
+```ml
+input |> Revamp.matches("<p\\b[^>]*>(.*?)<\\/p>", ~flags=[Revamp.IgnoreCase])
+      |> Rebase.Seq.forEach(Js.log);
+```
+
+#### Dasherize camelCased identifiers inside string literals using Regular Expression
+
+Uses [bs-revamp](https://github.com/glennsl/bs-revamp)
+
+```ml
+let code = {|
+  let borderLeftColor = "borderLeftColor";
+  let borderRightColor = "borderRightColor";
+|}
+
+let () =
+  code |> Revamp.replace {|"([^"]*)"|}                (* Matches the content of string literals *)
+            (Revamp.replace "[A-Z]" (fun letter ->    (* Matches uppercase letters *)
+              "-" ^ letter |> Js.String.toLowerCase)) (* Convert to lower case and prefix with a dash *)
+       |> Js.log
+       
+(* Outputs:
+  let borderLeftColor = "border-left-color";
+  let borderRightColor = "border-right-color";
+*)
+```
+
 #### Create a map data structure, add or replace an entry, and print each key/value pair
 
 ##### Map
