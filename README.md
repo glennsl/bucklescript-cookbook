@@ -556,6 +556,31 @@ let () =
   executeCommand "copy" Arg.[|string "text/html"; int 2|]
 ```
 
+##### Bind to a second-order callback that takes an argument of several different types (an untagged union)
+
+This binds to a function taking a callback, which is passed another callback that should be called with an
+untagged union value, such as an async function expecting a response. This function could be used in JavaScript
+as follows:
+
+```javascript
+withAsyncCallback(done => done("I'm done now"));
+// or
+withAsyncCallback(done => done(false));
+```
+
+In OCaml we could translate that to an option, and would then need to wrap the callback in order to convert it
+before passing it on:
+
+```ml
+type doneFn = string option -> unit
+external withAsyncCallback : ((Js.Json.t -> unit) -> unit) -> unit = "" [@@bs.val]
+let withAsyncCallback: (doneFn -> unit) -> unit =
+  fun f -> withAsyncCallback
+    (fun done_  ->
+     f (function | Some value -> value     |> Js.Json.string  |> done_
+                 | None       -> Js.false_ |> Js.Json.boolean |> done_))
+```
+
 
 
 ## Browser-specific
