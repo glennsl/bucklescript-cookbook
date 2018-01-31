@@ -429,9 +429,18 @@ let () =
 #### Define composable bitflags constants
 TODO
 
-#### Bind to a function overloaded to take an argument of several different types (an untagged union)
+### Untagged unions
 
-##### Mutiple externals
+An untagged union type is a type that can be several different types, but whose values, unlike variants,
+contain no information that can be translated to and dealt with directly and safely in OCaml. In TypeScript and flow
+such a type could be denoted as `string | number`. With BuckleScript we can take a number of different approaches
+depending on the context the types appear in, and what we need to do with them.
+
+#### Producing values of an untagged union type
+
+##### Bind to a function overloaded to take an argument of several different types (an untagged union)
+
+###### Mutiple externals
 ```ml
 module Date = struct
   type t
@@ -444,7 +453,7 @@ let date1 = Date.fromValue 107849354.
 let date2 = Date.fromString "1995-12-17T03:24:00"
 ```
 
-##### bs.unwrap
+###### bs.unwrap
 ```ml
 module Date = struct
   type t
@@ -456,7 +465,7 @@ let date1 = Date.make (`Value 107849354.)
 let date2 = Date.make (`String "1995-12-17T03:24:00")
 ```
 
-##### GADT
+###### GADT
 ```ml
 module Date = struct
   type t
@@ -472,7 +481,7 @@ let date1 = Date.make Value 107849354.
 let date2 = Date.make String "1995-12-17T03:24:00"
 ```
 
-#### Bind to a function that takes a variable number of arguments of different types (an untagged union)
+##### Bind to a function that takes a variable number of arguments of different types (an untagged union)
 ```ml
 module Arg = struct
   type t
@@ -487,7 +496,9 @@ let () =
   executeCommand "copy" Arg.[|string "text/html"; int 2|]
 ```
 
-#### Bind to a higher-order function that takes a function accepting an argument of several different types (an untagged union)
+#### Consuming values of an untagged union type
+
+##### Bind to a higher-order function that takes a function accepting an argument of several different types (an untagged union)
 
 ```ml
 (* Bind to the function, using Js.Jsont.t to capture the untagged union *)
@@ -506,6 +517,7 @@ let () =
   withCallback (function | `Float n -> Js.log n
                          | `String s -> Js.log s)
 ```
+
 
 ## Browser-specific
 
