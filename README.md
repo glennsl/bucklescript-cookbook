@@ -261,7 +261,7 @@ let () =
 
 #### Create a map data structure, add or replace an entry, and print each key/value pair
 
-##### Map
+###### Map
 
 Immutable, any key type, cross-platform
 
@@ -288,7 +288,7 @@ let () =
                |> StringMap.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
 ```
 
-##### Js.Dict
+###### Js.Dict
 
 Mutable, string key type, BuckleScript only
 
@@ -311,7 +311,7 @@ let () =
                |> Js.Array.forEach (fun (k, v) -> Js.log {j|key:$k, val:$v|j})
 ```
 
-##### Associative list
+###### Associative list
 
 Immutable, any key type, cross-platform
 
@@ -334,7 +334,7 @@ let () =
                |> List.iter (fun (k, v) -> Js.log {j|key:$k, val:$v|j})
 ```
 
-##### Hashtbl
+###### Hashtbl
 
 Mutable, string key type, cross-platform
 
