@@ -353,6 +353,44 @@ let () =
   painIndexMap |> Hashtbl.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
 ```
 
+#### Use a Set in a recursive type
+
+The task is to make something like this using Set:
+
+```ml
+type t = A | B | Union of t Set.t
+```
+
+Unfortunately there is no `Set.t`. We need to use the `Set.Make` functor which requires that
+we pass it the type the set will contain, but of course we don't have that yet since it's recursive...
+
+Instead we nee to use module recursion (Yay!):
+
+```ml
+module rec OrderedType : Set.OrderedType with type t = Type.t = struct
+  type t = Type.t
+  let compare = compare
+end
+
+and Type : sig
+  type t = A | B | Union of TypedSet.t
+end = Type
+
+and TypedSet : Set.S with type elt = OrderedType.t = Set.Make(OrderedType)
+
+include Type
+```
+
+This could have been accomplished with just two modules, `TypedSet` and `OrderedType`, but adding `Type` 
+let's us get away with only defining the type once, and to be able to include it such that we can use the
+type as if it was defined at the top level, without also including `comapre` and thereby shadow `Pervasives.compare`.
+
+We can now use the type seamlessly, as if there was no complicated module recursion with intermingled types:
+
+```ml
+let value = Union (TypedSet.of_list [A; B; A])
+```
+
 ## FFI
 
 #### Bind to a simple function
