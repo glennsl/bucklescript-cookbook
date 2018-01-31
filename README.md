@@ -502,7 +502,29 @@ let () =
 
 #### Consuming values of an untagged union type
 
+##### Bind to a higher-order function that returns a value of several different types (an untagged union)
+
+```ml
+(* Bind to the function, using Js.Jsont.t to capture the untagged union *)
+external getRandomlyTypedValue : unit -> Js.Json.t = "" [@@bs.val]
+
+(* Override the binding with a function that converts the return value *)
+let getRandomlyTypedValue () =
+  match Js.Json.classify (getRandomlyTypedValue ()) with
+  | Js.Json.JSONNumber n -> `Float n
+  | Js.Json.JSONString s -> `String s
+  | _ -> failwith "unreachable"
+
+(* The function can now be used safely and idiomatically *)
+let () =
+  match getRandomlyTypedValue () with
+  | `Float n  -> Js.log2 "Float: " n
+  | `String s -> Js.log2 "String: " s
+```
+
 ##### Bind to a higher-order function that takes a function accepting an argument of several different types (an untagged union)
+
+This takes the same pattern sued in the previous example, but applies it to a wrapped callback instead.
 
 ```ml
 (* Bind to the function, using Js.Jsont.t to capture the untagged union *)
