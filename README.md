@@ -51,9 +51,12 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
 
 <!-- tocstop -->
 
+
 ## Reason
 
 All examples in this document use plain OCaml syntax. If you'd rather have a more [Reason](https://facebook.github.io/reason/)able syntax, the examples can be easily be converted using [reason-tools](https://github.com/reasonml/reason-tools), either by installing the browser extension ([Chrome](https://chrome.google.com/webstore/detail/reason-tools/kmdelnjbembbiodplmhgfjpecibfhadd) | [Firefox](https://addons.mozilla.org/en-US/firefox/addon/reason-tools/)), or [directly](https://reasonml.github.io/reason-tools/popup.html).
+
+
 
 ## Contributing
 
@@ -61,6 +64,8 @@ There are primarily two ways to contribute:
 
 1. Suggest an example to include in the cookbook by [creating an issue](https://github.com/glennsl/bucklescript-cookbook/issues/new) to describe the task.
 2. Add (or edit) an example by [editing this file directly](https://github.com/glennsl/bucklescript-cookbook/edit/master/README.md) and creating a pull request.
+
+
 
 ## General
 
@@ -395,6 +400,8 @@ We can now use the type seamlessly, as if there was no complicated module recurs
 let value = Union (TypedSet.of_list [A; B; A])
 ```
 
+
+
 ## FFI
 
 #### Bind to a simple function
@@ -433,12 +440,61 @@ let () =
 #### Define composable bitflags constants
 TODO
 
+
+
 ### Untagged unions
 
 An untagged union type is a type that can be several different types, but whose values, unlike variants,
 contain no information that can be translated to and dealt with directly and safely in OCaml. In TypeScript and flow
 such a type could be denoted as `string | number`. With BuckleScript we can take a number of different approaches
 depending on the context the types appear in, and what we need to do with them.
+
+
+#### Consuming values of an untagged union type
+
+##### Bind to a higher-order function that returns a value of several different types (an untagged union)
+
+```ml
+(* Bind to the function, using Js.Jsont.t to capture the untagged union *)
+external getRandomlyTypedValue : unit -> Js.Json.t = "" [@@bs.val]
+
+(* Override the binding with a function that converts the return value *)
+let getRandomlyTypedValue () =
+  match Js.Json.classify (getRandomlyTypedValue ()) with
+  | Js.Json.JSONNumber n -> `Float n
+  | Js.Json.JSONString s -> `String s
+  | _ -> failwith "unreachable"
+
+(* The function can now be used safely and idiomatically *)
+let () =
+  match getRandomlyTypedValue () with
+  | `Float n  -> Js.log2 "Float: " n
+  | `String s -> Js.log2 "String: " s
+```
+
+##### Bind to a higher-order function that takes a function accepting an argument of several different types (an untagged union)
+
+This takes the same pattern used in the previous example and applies it to a wrapped callback, since in this case it's "returned"
+as an argument to a callback function.
+
+```ml
+(* Bind to the function, using Js.Jsont.t to capture the untagged union *)
+external withCallback : (Js.Json.t -> unit) -> unit = "" [@@bs.val]
+
+(* Override the binding with a function that wraps the callback in a function that classifies and wraps the argument *)
+let withCallback cb =
+  withCallback (fun json  ->
+    match Js.Json.classify json with
+    | Js.Json.JSONNumber n -> cb (`Float n)
+    | Js.Json.JSONString s -> cb (`String s)
+    | _ -> failwith "unreachable")
+
+(* The function can now be used safely and idiomatically *)
+let () =
+  withCallback (function | `Float n -> Js.log n
+                         | `String s -> Js.log s)
+```
+
 
 #### Producing values of an untagged union type
 
@@ -500,49 +556,6 @@ let () =
   executeCommand "copy" Arg.[|string "text/html"; int 2|]
 ```
 
-#### Consuming values of an untagged union type
-
-##### Bind to a higher-order function that returns a value of several different types (an untagged union)
-
-```ml
-(* Bind to the function, using Js.Jsont.t to capture the untagged union *)
-external getRandomlyTypedValue : unit -> Js.Json.t = "" [@@bs.val]
-
-(* Override the binding with a function that converts the return value *)
-let getRandomlyTypedValue () =
-  match Js.Json.classify (getRandomlyTypedValue ()) with
-  | Js.Json.JSONNumber n -> `Float n
-  | Js.Json.JSONString s -> `String s
-  | _ -> failwith "unreachable"
-
-(* The function can now be used safely and idiomatically *)
-let () =
-  match getRandomlyTypedValue () with
-  | `Float n  -> Js.log2 "Float: " n
-  | `String s -> Js.log2 "String: " s
-```
-
-##### Bind to a higher-order function that takes a function accepting an argument of several different types (an untagged union)
-
-This takes the same pattern sued in the previous example, but applies it to a wrapped callback instead.
-
-```ml
-(* Bind to the function, using Js.Jsont.t to capture the untagged union *)
-external withCallback : (Js.Json.t -> unit) -> unit = "" [@@bs.val]
-
-(* Override the binding with a function that wraps the callback in a function that classifies and wraps the argument *)
-let withCallback cb =
-  withCallback (fun json  ->
-    match Js.Json.classify json with
-    | Js.Json.JSONNumber n -> cb (`Float n)
-    | Js.Json.JSONString s -> cb (`String s)
-    | _ -> failwith "unreachable")
-
-(* The function can now be used safely and idiomatically *)
-let () =
-  withCallback (function | `Float n -> Js.log n
-                         | `String s -> Js.log s)
-```
 
 
 ## Browser-specific
@@ -594,6 +607,9 @@ let printGithubRepos () = Js.Promise.(
 let () =
   printGithubRepos ()
 ```
+
+
+
 ## Node-specific
 
 #### Read lines from a text file
