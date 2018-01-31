@@ -19,10 +19,10 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
     + [Extract specific HTML tags from an HTML document using a Regular Expression](#extract-specific-html-tags-from-an-html-document-using-a-regular-expression)
     + [Dasherize camelCased identifiers inside string literals using Regular Expression](#dasherize-camelcased-identifiers-inside-string-literals-using-regular-expression)
     + [Create a map data structure, add or replace an entry, and print each key/value pair](#create-a-map-data-structure-add-or-replace-an-entry-and-print-each-keyvalue-pair)
-      - [Map](#map)
-      - [Js.Dict](#jsdict)
-      - [Associative list](#associative-list)
-      - [Hashtbl](#hashtbl)
+        * [Map](#map)
+        * [Js.Dict](#jsdict)
+        * [Associative list](#associative-list)
+        * [Hashtbl](#hashtbl)
     + [Use a Set in a recursive type](#use-a-set-in-a-recursive-type)
 - [FFI](#ffi)
     + [Bind to a simple function](#bind-to-a-simple-function)
@@ -31,14 +31,16 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
     + [Raise a javascript exception, then catch it and print its message](#raise-a-javascript-exception-then-catch-it-and-print-its-message)
     + [Define composable bitflags constants](#define-composable-bitflags-constants)
   * [Untagged unions](#untagged-unions)
+    + [Consuming values of an untagged union type](#consuming-values-of-an-untagged-union-type)
+      - [Bind to a higher-order function that returns a value of several different types (an untagged union)](#bind-to-a-higher-order-function-that-returns-a-value-of-several-different-types-an-untagged-union)
+      - [Bind to a higher-order function that takes a function accepting an argument of several different types (an untagged union)](#bind-to-a-higher-order-function-that-takes-a-function-accepting-an-argument-of-several-different-types-an-untagged-union)
     + [Producing values of an untagged union type](#producing-values-of-an-untagged-union-type)
       - [Bind to a function overloaded to take an argument of several different types (an untagged union)](#bind-to-a-function-overloaded-to-take-an-argument-of-several-different-types-an-untagged-union)
         * [Mutiple externals](#mutiple-externals)
         * [bs.unwrap](#bsunwrap)
         * [GADT](#gadt)
       - [Bind to a function that takes a variable number of arguments of different types (an untagged union)](#bind-to-a-function-that-takes-a-variable-number-of-arguments-of-different-types-an-untagged-union)
-    + [Consuming values of an untagged union type](#consuming-values-of-an-untagged-union-type)
-      - [Bind to a higher-order function that takes a function accepting an argument of several different types (an untagged union)](#bind-to-a-higher-order-function-that-takes-a-function-accepting-an-argument-of-several-different-types-an-untagged-union)
+      - [Bind to a second-order callback that takes an argument of several different types (an untagged union)](#bind-to-a-second-order-callback-that-takes-an-argument-of-several-different-types-an-untagged-union)
 - [Browser-specific](#browser-specific)
     + [Extract all links from a webpage](#extract-all-links-from-a-webpage)
     + [Query the GitHub API](#query-the-github-api)
@@ -50,7 +52,6 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
     + [Parse command-line arguments](#parse-command-line-arguments)
 
 <!-- tocstop -->
-
 
 ## Reason
 
