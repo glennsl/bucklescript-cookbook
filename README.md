@@ -402,6 +402,134 @@ let value = Union (TypedSet.of_list [A; B; A])
 ```
 
 
+### Promises
+
+#### Creating new Promises
+
+```ml
+let okPromise =
+  Js.Promise.make (fun ~resolve ~reject:_ -> (resolve "ok")[@bs])
+
+(* Simpler promise creation for static values *)
+let _ : string Js.Promise.t =
+  Js.Promise.resolve "easy"
+
+(* Create a promise that resolves much later *)
+let _ : _ Js.Promise.t =
+  Js.Promise.reject (Invalid_argument "too easy")
+  
+let timer =
+  Js.Promise.make (fun ~resolve ~reject:_ ->
+    (* `Js.Global.setTimeout` returns a `timeoutId`, so we assign it to
+       `_` to ginore and, and annotate its type to make sure we don't
+       accidentally partially apply the function *)
+    let _ : Js.Global.timeoutId =
+      Js.Global.setTimeout
+      	(fun () -> (resolve "Done!")[@bs])
+        1000
+    in ()
+  )
+```
+
+#### Handling promise values
+
+```ml
+(*
+ * Note that we *have* to return a new promise inside of the callback given to then_;
+ *)
+let _ : unit Js.Promise.t =
+  Js.Promise.then_
+    (fun value -> Js.Promise.resolve (Js.log value))
+    okPromise
+
+(* Chaining *)
+let _ : unit Js.Promise.t =
+  Js.Promise.then_
+  	(fun value -> Js.Promise.resolve (Js.log value))
+    (Js.Promise.then_
+      (fun value -> Js.Promise.resolve (value + 1))
+      (Js.Promise.resolve 1))
+
+(* Better with pipes 😉 *)
+let _ : unit Js.Promise.t =
+  Js.Promise.resolve 1
+  |> Js.Promise.then_ (fun value -> Js.Promise.resolve (value + 1))
+  |> Js.Promise.then_ (fun value -> Js.Promise.resolve (Js.log value))
+
+(* And even better with local open *)
+let _ : unit Js.Promise.t =
+  let open Js.Promise in
+  resolve 1 |> then_ (fun value -> resolve (value + 1))
+            |> then_ (fun value -> resolve (Js.log value))
+
+(* Waiting for two values *)
+let _ : unit Js.Promise.t =
+  let open Js.Promise in
+  all2 (resolve 1, resolve "a")
+  |> then_ (fun (v1, v2) ->
+  	   Js.log ("Value 1: " ^ string_of_int v1);
+       Js.log ("Value 2: " ^ v2);
+       resolve ())
+
+(* Waiting for an array of values *)
+let _ : unit Js.Promise.t =
+  let open Js.Promise in
+   all [|resolve 1; resolve 2; resolve 3|]
+   |> then_ (fun vs ->
+        vs |> Array.iteri (fun v i -> Js.log {j|Value $i: $v|j});
+        resolve ())
+```
+
+#### Error handling
+
+```ml
+(* Using a built-in OCaml error *)
+let notFoundPromise =
+  Js.Promise.make (fun ~resolve:_ ~reject  -> (reject Not_found) [@bs])
+  
+let _ : unit Js.Promise.t =
+  notFoundPromise
+  |> Js.Promise.then_ (fun value -> Js.Promise.resolve (Js.log value))
+  |> (Js.Promise.catch (fun err -> Js.Promise.resolve (Js.log err)))
+
+(* Using a custom error *)
+exception Oh_no of string
+
+let ohNoPromise : _ Js.Promise.t =
+  Js.Promise.make (fun ~resolve:_ ~reject -> reject (Oh_no ("oh no")) [@bs])
+  
+let _ : unit Js.Promise.t =
+  ohNoPromise |> Js.Promise.catch (fun err -> Js.Promise.resolve (Js.log err))
+
+(**
+ * Unfortunately, as one can see - catch expects a very generic `Js.Promise.error` value
+ * that doesn't give us much to do with.
+ * In general, we should not rely on rejecting/catching errors for control flow;
+ * it's much better to use a `result` type instead.
+ *)
+let betterOk : (string, _) Js.Result.t Js.Promise.t =
+  Js.Promise.make (fun ~resolve ~reject:_ ->
+    resolve (Js.Result.Ok ("everything's fine")) [@bs])
+         
+let betterOhNo : (_, string) Js.Result.t Js.Promise.t =
+  Js.Promise.make (fun ~resolve ~reject:_ ->
+    resolve (Js.Result.Error ("nope nope nope")) [@bs])
+         
+let handleResult =
+  Js.Promise.then_ (fun result ->
+    Js.Promise.resolve (
+      match result with
+      | Js.Result.Ok text -> Js.log ("OK: " ^ text)
+      | Js.Result.Error reason -> Js.log ("Oh no: " ^ reason)))
+      
+let _ : unit Js.Promise.t =
+  handleResult betterOk
+  
+let _ : unit Js.Promise.t =
+  handleResult betterOhNo
+```
+
+
 
 ## FFI
 
