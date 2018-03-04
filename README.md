@@ -284,6 +284,9 @@ let () =
       let compare = compare
     end) in
   
+  (* Alternatively, for modules which already conform to this signature *)
+  let module StringMap = Map.Make(String) in
+  
   let painIndexMap = StringMap.(
     empty
     |> add "western paper wasp" 1.0
