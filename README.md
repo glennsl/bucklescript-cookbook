@@ -381,7 +381,7 @@ type t = A | B | Union of t Set.t
 Unfortunately there is no `Set.t`. We need to use the `Set.Make` functor which requires that
 we pass it the type the set will contain, but of course we don't have that yet since it's recursive...
 
-Instead we nee to use module recursion (Yay!):
+Instead we need to use module recursion (Yay!):
 
 ```ml
 module rec OrderedType : Set.OrderedType with type t = Type.t = struct
