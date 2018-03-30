@@ -591,7 +591,7 @@ depending on the context the types appear in, and what we need to do with them.
 ##### Bind to a higher-order function that returns a value of several different types (an untagged union)
 
 ```ml
-(* Bind to the function, using Js.Jsont.t to capture the untagged union *)
+(* Bind to the function, using Js.Json.t to capture the untagged union *)
 external getRandomlyTypedValue : unit -> Js.Json.t = "" [@@bs.val]
 
 (* Override the binding with a function that converts the return value *)
@@ -614,7 +614,7 @@ This takes the same pattern used in the previous example and applies it to a wra
 as an argument to a callback function.
 
 ```ml
-(* Bind to the function, using Js.Jsont.t to capture the untagged union *)
+(* Bind to the function, using Js.Json.t to capture the untagged union *)
 external withCallback : (Js.Json.t -> unit) -> unit = "" [@@bs.val]
 
 (* Override the binding with a function that wraps the callback in a function that classifies and wraps the argument *)
