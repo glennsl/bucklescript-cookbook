@@ -400,7 +400,7 @@ include Type
 
 This could have been accomplished with just two modules, `TypedSet` and `OrderedType`, but adding `Type` 
 let's us get away with only defining the type once, and to be able to include it such that we can use the
-type as if it was defined at the top level, without also including `comapre` and thereby shadow `Pervasives.compare`.
+type as if it was defined at the top level, without also including `compare` and thereby shadow `Pervasives.compare`.
 
 We can now use the type seamlessly, as if there was no complicated module recursion with intermingled types:
 
