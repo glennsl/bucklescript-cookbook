@@ -23,6 +23,7 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
         * [Js.Dict](#jsdict)
         * [Associative list](#associative-list)
         * [Hashtbl](#hashtbl)
+        * [Belt.HashMap.String](#belthashmapstring)
     + [Use a Set in a recursive type](#use-a-set-in-a-recursive-type)
   * [Promises](#promises)
     + [Creating new Promises](#creating-new-promises)
@@ -182,8 +183,8 @@ let () =
 Use [Random module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Random.html) to generate random numbers
 
 ```ml
-let () =
-  Js.log (Random.int 5)
+let () = Random.init (int_of_float (Js.Date.now ()))
+let () = (Random.int 5) |> Js.log
 ```
 
 #### Log a message to the console
@@ -240,16 +241,7 @@ let () =
       Js.log "no matches"
 ```
 
-Or using [bs-revamp](https://github.com/glennsl/bs-revamp) with the same input:
-
-```ml
-input |> Revamp.matches("<p\\b[^>]*>(.*?)<\\/p>", ~flags=[Revamp.IgnoreCase])
-      |> Rebase.Seq.forEach(Js.log);
-```
-
 #### Dasherize camelCased identifiers inside string literals using Regular Expression
-
-Uses [bs-revamp](https://github.com/glennsl/bs-revamp)
 
 ```ml
 let code = {|
@@ -257,12 +249,22 @@ let code = {|
   let borderRightColor = "borderRightColor";
 |}
 
+let matchLetter letter _ _ = "-" ^ (Js.String.toLowerCase letter)
+
+let matchLiterals _ p1 _ _ =
+  let t =
+    Js.String.unsafeReplaceBy0
+      [%re "/[A-Z]/g"] matchLetter p1 in
+  {j|"$t"|j}
+
 let () =
-  code |> Revamp.replace {|"([^"]*)"|}                (* Matches the content of string literals *)
-            (Revamp.replace "[A-Z]" (fun letter ->    (* Matches uppercase letters *)
-              "-" ^ letter |> Js.String.toLowerCase)) (* Convert to lower case and prefix with a dash *)
-       |> Js.log
-       
+  (code |>
+     Js.String.unsafeReplaceBy1
+        [%re
+           "/\"([^\"]*)\"/g"]
+        matchLiterals)
+    |> Js.log
+
 (* Outputs:
   let borderLeftColor = "border-left-color";
   let borderRightColor = "border-right-color";
@@ -349,7 +351,7 @@ let () =
 
 ###### Hashtbl
 
-Mutable, string key type, cross-platform
+Mutable, string key type
 
 ```ml
 let painIndexMap = Hashtbl.create 10
@@ -368,6 +370,29 @@ let () =
 
 let () =
   painIndexMap |> Hashtbl.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
+```
+
+###### Belt.HashMap.String
+
+Mutable, string key type, BuckleScript only
+
+```ml
+open Belt
+let painIndexMap = HashMap.String.make ~hintSize:10
+let () =
+  let open HashMap.String in
+    set painIndexMap "western paper wasp" 1.0;
+    set painIndexMap "yellowjacket" 2.0;
+    set painIndexMap "honey bee" 2.0;
+    set painIndexMap "red paper wasp" 3.0;
+    set painIndexMap "tarantula hawk" 4.0;
+    set painIndexMap "bullet ant" 4.0
+
+let () =
+  HashMap.String.set painIndexMap "bumble bee" 2.0
+
+let () =
+  painIndexMap |. HashMap.String.forEach (fun k  -> fun v  -> Js.log {j|key:$k, val:$v|j})
 ```
 
 #### Use a Set in a recursive type
@@ -432,7 +457,7 @@ let timer =
        accidentally partially apply the function *)
     let _ : Js.Global.timeoutId =
       Js.Global.setTimeout
-      	(fun () -> (resolve "Done!")[@bs])
+        (fun () -> (resolve "Done!")[@bs])
         1000
     in ()
   )
@@ -452,7 +477,7 @@ let _ : unit Js.Promise.t =
 (* Chaining *)
 let _ : unit Js.Promise.t =
   Js.Promise.then_
-  	(fun value -> Js.Promise.resolve (Js.log value))
+    (fun value -> Js.Promise.resolve (Js.log value))
     (Js.Promise.then_
       (fun value -> Js.Promise.resolve (value + 1))
       (Js.Promise.resolve 1))
@@ -474,7 +499,7 @@ let _ : unit Js.Promise.t =
   let open Js.Promise in
   all2 (resolve 1, resolve "a")
   |> then_ (fun (v1, v2) ->
-  	   Js.log ("Value 1: " ^ string_of_int v1);
+       Js.log ("Value 1: " ^ string_of_int v1);
        Js.log ("Value 2: " ^ v2);
        resolve ())
 
@@ -514,20 +539,20 @@ let _ : unit Js.Promise.t =
  * In general, we should not rely on rejecting/catching errors for control flow;
  * it's much better to use a `result` type instead.
  *)
-let betterOk : (string, _) Js.Result.t Js.Promise.t =
+let betterOk : (string, _) Belt.Result.t Js.Promise.t =
   Js.Promise.make (fun ~resolve ~reject:_ ->
-    resolve (Js.Result.Ok ("everything's fine")) [@bs])
+    resolve (Belt.Result.Ok ("everything's fine")) [@bs])
          
-let betterOhNo : (_, string) Js.Result.t Js.Promise.t =
+let betterOhNo : (_, string) Belt.Result.t Js.Promise.t =
   Js.Promise.make (fun ~resolve ~reject:_ ->
-    resolve (Js.Result.Error ("nope nope nope")) [@bs])
+    resolve (Belt.Result.Error ("nope nope nope")) [@bs])
          
 let handleResult =
   Js.Promise.then_ (fun result ->
     Js.Promise.resolve (
       match result with
-      | Js.Result.Ok text -> Js.log ("OK: " ^ text)
-      | Js.Result.Error reason -> Js.log ("Oh no: " ^ reason)))
+      | Belt.Result.Ok text -> Js.log ("OK: " ^ text)
+      | Belt.Result.Error reason -> Js.log ("Oh no: " ^ reason)))
       
 let _ : unit Js.Promise.t =
   handleResult betterOk
@@ -559,6 +584,8 @@ let person = [%obj {
   };
   age = 32
 }]
+
+let _ = Js.log (## (## person name) first)
 ```
 
 #### Raise a javascript exception, then catch it and print its message
@@ -713,8 +740,8 @@ external withAsyncCallback : ((Js.Json.t -> unit) -> unit) -> unit = "" [@@bs.va
 let withAsyncCallback: (doneFn -> unit) -> unit =
   fun f -> withAsyncCallback
     (fun done_  ->
-     f (function | Some value -> value     |> Js.Json.string  |> done_
-                 | None       -> Js.false_ |> Js.Json.boolean |> done_))
+     f (function | Some value -> value |> Js.Json.string  |> done_
+                 | None       -> false |> Js.Json.boolean |> done_))
 ```
 
 
@@ -774,7 +801,6 @@ let () =
 ## Node-specific
 
 #### Read lines from a text file
-Uses [bs-node](https://github.com/reasonml-community/bs-node)
 ```ml
 let () =
   Node.Fs.readFileAsUtf8Sync "README.md"
@@ -783,7 +809,7 @@ let () =
 ```
 
 #### Read and parse a JSON file
-Uses [bs-json](https://github.com/reasonml-community/bs-json) and [bs-node](https://github.com/reasonml-community/bs-node)
+Uses [bs-json](https://github.com/reasonml-community/bs-json)
 ```ml
 let decodeName text =
   Js.Json.parseExn text
@@ -804,11 +830,10 @@ let () =
 ```
 
 #### Run an external command
-Uses [bs-node](https://github.com/reasonml-community/bs-node)
 ```ml
 let () =
   (* prints node's version *)
-  Node.(ChildProcess.execSync "node -v" (Options.options ~encoding:"utf8" ()))
+  Node.(Child_process.execSync "node -v" (Child_process.option ~encoding:"utf8" ()))
   |> Js.log
 ```
 
