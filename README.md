@@ -23,7 +23,7 @@ This has been heavily inspired by the [Rust Cookbook](https://brson.github.io/ru
         * [Js.Dict](#jsdict)
         * [Associative list](#associative-list)
         * [Hashtbl](#hashtbl)
-        * [Belt.HashMap.String](#belthashmapstring)
+        * [Belt.HashMap](#belthashmap)
     + [Use a Set in a recursive type](#use-a-set-in-a-recursive-type)
   * [Promises](#promises)
     + [Creating new Promises](#creating-new-promises)
@@ -183,8 +183,10 @@ let () =
 Use [Random module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Random.html) to generate random numbers
 
 ```ml
-let () = Random.init (int_of_float (Js.Date.now ()))
-let () = (Random.int 5) |> Js.log
+(* To make sure you have a different seed when your program runs each time *)
+let () = Js.Date.now () |> int_of_float |> Random.init
+
+let () = Random.int 5 |> Js.log
 ```
 
 #### Log a message to the console
@@ -240,8 +242,36 @@ let () =
     | None ->
       Js.log "no matches"
 ```
+Or using [bs-revamp](https://github.com/glennsl/bs-revamp) with the same input:
+
+```ml
+input |> Revamp.matches("<p\\b[^>]*>(.*?)<\\/p>", ~flags=[Revamp.IgnoreCase])
+      |> Rebase.Seq.forEach(Js.log);
+```
 
 #### Dasherize camelCased identifiers inside string literals using Regular Expression
+
+Uses [bs-revamp](https://github.com/glennsl/bs-revamp)
+
+```ml
+let code = {|
+  let borderLeftColor = "borderLeftColor";
+  let borderRightColor = "borderRightColor";
+|}
+
+let () =
+  code |> Revamp.replace {|"([^"]*)"|}                (* Matches the content of string literals *)
+            (Revamp.replace "[A-Z]" (fun letter ->    (* Matches uppercase letters *)
+              "-" ^ letter |> Js.String.toLowerCase)) (* Convert to lower case and prefix with a dash *)
+       |> Js.log
+       
+(* Outputs:
+  let borderLeftColor = "border-left-color";
+  let borderRightColor = "border-right-color";
+*)
+```
+
+or use `Js.String`
 
 ```ml
 let code = {|
@@ -351,7 +381,7 @@ let () =
 
 ###### Hashtbl
 
-Mutable, string key type
+Mutable, string key type, cross-platform
 
 ```ml
 let painIndexMap = Hashtbl.create 10
@@ -372,15 +402,24 @@ let () =
   painIndexMap |> Hashtbl.iter (fun k v -> Js.log {j|key:$k, val:$v|j})
 ```
 
-###### Belt.HashMap.String
+###### Belt.HashMap
 
-Mutable, string key type, BuckleScript only
+Use a generic `Belt.HashMap` to demo a mutable hash map with string type key. In fact, You can use `Belt.HashMap.String` instead.
 
 ```ml
 open Belt
-let painIndexMap = HashMap.String.make ~hintSize:10
+module StrHash =
+  Id.MakeHashable(struct
+                    type t = string
+                    let hash (x : t) = String.length x
+                    let eq (a : t) (b : t) = a = b
+                  end)
+
+let painIndexMap = HashMap.make ~hintSize:10 ~id:(module StrHash)
+
 let () =
-  let open HashMap.String in
+  let open HashMap in
+
     set painIndexMap "western paper wasp" 1.0;
     set painIndexMap "yellowjacket" 2.0;
     set painIndexMap "honey bee" 2.0;
@@ -389,10 +428,11 @@ let () =
     set painIndexMap "bullet ant" 4.0
 
 let () =
-  HashMap.String.set painIndexMap "bumble bee" 2.0
+  HashMap.set painIndexMap "bumble bee" 2.0
 
 let () =
-  painIndexMap |. HashMap.String.forEach (fun k  -> fun v  -> Js.log {j|key:$k, val:$v|j})
+  HashMap.forEach painIndexMap
+    (fun k  -> fun v  -> Js.log {j|key:$k, val:$v|j})
 ```
 
 #### Use a Set in a recursive type
@@ -584,8 +624,6 @@ let person = [%obj {
   };
   age = 32
 }]
-
-let _ = Js.log (## (## person name) first)
 ```
 
 #### Raise a javascript exception, then catch it and print its message
