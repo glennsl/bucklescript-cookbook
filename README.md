@@ -184,7 +184,7 @@ Use [Random module](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Random.htm
 
 ```ml
 (* To make sure you have a different seed when your program runs each time *)
-let () = Js.Date.now () |> int_of_float |> Random.init
+let () = Random.init (Js.Date.now () |> int_of_float)
 
 let () = Random.int 5 |> Js.log
 ```
@@ -282,18 +282,13 @@ let code = {|
 let matchLetter letter _ _ = "-" ^ (Js.String.toLowerCase letter)
 
 let matchLiterals _ p1 _ _ =
-  let t =
-    Js.String.unsafeReplaceBy0
-      [%re "/[A-Z]/g"] matchLetter p1 in
-  {j|"$t"|j}
+  let t = Js.String.unsafeReplaceBy0 [%re "/[A-Z]/g"] matchLetter p1 in {j|"$t"|j}
 
-let () =
-  (code |>
-     Js.String.unsafeReplaceBy1
-        [%re
-           "/\"([^\"]*)\"/g"]
-        matchLiterals)
-    |> Js.log
+let () = 
+  code
+  |> Js.String.unsafeReplaceBy1 [%re "/\"([^\"]*)\"/g"] matchLiterals
+  |> Js.log
+
 
 (* Outputs:
   let borderLeftColor = "border-left-color";
@@ -411,15 +406,13 @@ open Belt
 module StrHash =
   Id.MakeHashable(struct
                     type t = string
-                    let hash (x : t) = String.length x
-                    let eq (a : t) (b : t) = a = b
+                    let hash = String.length
+                    let eq = (=)
                   end)
 
 let painIndexMap = HashMap.make ~hintSize:10 ~id:(module StrHash)
-
 let () =
   let open HashMap in
-
     set painIndexMap "western paper wasp" 1.0;
     set painIndexMap "yellowjacket" 2.0;
     set painIndexMap "honey bee" 2.0;
@@ -427,12 +420,11 @@ let () =
     set painIndexMap "tarantula hawk" 4.0;
     set painIndexMap "bullet ant" 4.0
 
-let () =
-  HashMap.set painIndexMap "bumble bee" 2.0
+let () = HashMap.set painIndexMap "bumble bee" 2.0
 
-let () =
-  HashMap.forEach painIndexMap
-    (fun k  -> fun v  -> Js.log {j|key:$k, val:$v|j})
+let () = 
+  HashMap.forEach painIndexMap 
+  @@ fun k v -> Js.log {j|key:$k, val:$v|j}
 ```
 
 #### Use a Set in a recursive type
